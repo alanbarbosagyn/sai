@@ -16,6 +16,7 @@
 	<description>Sistema de Acompanhamento de Imóveis</description>
 	<properties>
 		<java.version>11</java.version>
+		<spring.version>2.4.5</spring.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -57,6 +58,12 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jdbc</artifactId>
 		</dependency>
 
 		<dependency>
@@ -91,6 +98,13 @@
 		</dependency>
 
 		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>8.0.25</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
 		    <groupId>io.springfox</groupId>
 		    <artifactId>springfox-swagger2</artifactId>
 		    <version>2.9.2</version>
@@ -103,11 +117,12 @@
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-commons</artifactId>
-			<version>2.4.8</version>
+			<version>${spring.version}</version>
 		</dependency>
 	</dependencies>
 
 	<build>
+		<finalName>sai</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.asciidoctor</groupId>

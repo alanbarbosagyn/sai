@@ -27,27 +27,27 @@ public class SaiApplication extends SpringBootServletInitializer {
 		SpringApplication.run(SaiApplication.class, args);
 	}
 
-	@Bean
-	CommandLineRunner init(ImovelRepository imovelRepository, UsuarioRepository usuarioRepository) {
-		return args -> {
-			Stream.of(new Imovel(null, "Casa 3Q c/ suíte", 10000000.00),
-					new Imovel(null,  "Sobrado 4Q e 3 suítes C/2 vagas garagem", 30000000.00),
-					new Imovel(null,  "Apto 2Q c/suíte 2 Vagas de Garagem",  5000000.00)).forEach(
-							item -> {
-								imovelRepository.save(item);
-							});
-
-			imovelRepository.findAll().forEach(System.out::println);
-
-			Stream.of(new Usuario(null, "Usuário Teste","login.teste", "teste@gmai.com", "http://image.com", false, "AJF#JF#JL#JL", AuthProvider.local, AuthProvider.local.name(), null),
-					new Usuario(null, "Teste 2 user", "login2.tes", "teste@uol.com", "http://imagem2.com", false, "651sdf165", AuthProvider.local, AuthProvider.local.name(),null)).forEach(
-					item -> {
-						usuarioRepository.save(item);
-					});
-
-			usuarioRepository.findAll().forEach(System.out::println);
-
-		};
-	}
+//	@Bean
+//	CommandLineRunner init(ImovelRepository imovelRepository, UsuarioRepository usuarioRepository) {
+//		return args -> {
+//			Stream.of(new Imovel(null, "Casa 3Q c/ suíte", 10000000.00),
+//					new Imovel(null,  "Sobrado 4Q e 3 suítes C/2 vagas garagem", 30000000.00),
+//					new Imovel(null,  "Apto 2Q c/suíte 2 Vagas de Garagem",  5000000.00)).forEach(
+//							item -> {
+//								imovelRepository.save(item);
+//							});
+//
+//			imovelRepository.findAll().forEach(System.out::println);
+//
+//			Stream.of(new Usuario(null, "Usuário Teste","login.teste", "teste@gmai.com", "http://image.com", false, "AJF#JF#JL#JL", AuthProvider.local, AuthProvider.local.name(), null),
+//					new Usuario(null, "Teste 2 user", "login2.tes", "teste@uol.com", "http://imagem2.com", false, "651sdf165", AuthProvider.local, AuthProvider.local.name(),null)).forEach(
+//					item -> {
+//						usuarioRepository.save(item);
+//					});
+//
+//			usuarioRepository.findAll().forEach(System.out::println);
+//
+//		};
+//	}
 
 }

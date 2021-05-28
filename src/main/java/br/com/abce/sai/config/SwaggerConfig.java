@@ -1,9 +1,6 @@
 package br.com.abce.sai.config;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import io.swagger.models.auth.In;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.hateoas.client.LinkDiscoverer;
@@ -13,8 +10,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.plugin.core.SimplePluginRegistry;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-
-import io.swagger.models.auth.In;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.builders.ResponseMessageBuilder;
@@ -26,7 +21,13 @@ import springfox.documentation.service.SecurityReference;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger.web.*;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
+import javax.websocket.OnError;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableSwagger2
@@ -53,6 +54,11 @@ public class SwaggerConfig {
 					.responseModel(new ModelRef("Error"))
 					.build());
 			add(new ResponseMessageBuilder()
+					.code(404)
+					.message("404 not found")
+					.responseModel(new ModelRef("Error"))
+					.build());
+			add(new ResponseMessageBuilder()
 					.code(403)
 					.message("Forbidden!")
 					.build());
@@ -66,7 +72,7 @@ public class SwaggerConfig {
 				.build();
 	}
 
-	List<SecurityReference> defaultAuth() {
+	public List<SecurityReference> defaultAuth() {
 		AuthorizationScope authorizationScope
 		= new AuthorizationScope("ADMIN", "accessEverything");
 		AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
@@ -88,6 +94,5 @@ public class SwaggerConfig {
 		List<LinkDiscoverer> plugins = new ArrayList<>();
 		plugins.add(new CollectionJsonLinkDiscoverer());
 		return new LinkDiscoverers(SimplePluginRegistry.create(plugins));
-
 	}
 }

@@ -1,93 +1,41 @@
 package br.com.abce.sai.persistence.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import br.com.abce.sai.persistence.model.entity.FotoEntity;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.stream.Stream;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Table(name = "usuario", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "email")
-})
+@Table(name = "usuario", schema = "sai", catalog = "")
 public class Usuario {
 
     @Id
+    @Column(name = "id_usuario", nullable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Getter
-    @Setter
-    private Long id;
+    private Long idUsuario;
 
-    @Column(nullable = false, scale = 120)
-    @Getter
-    @Setter
-    private String nome;
-
-    @Column(nullable = false, scale = 100)
-    @Getter
-    @Setter
+    @Column(name = "login", nullable = true, length = 45)
     private String login;
 
-    @Email
-    @Column(nullable = false)
-    @Getter
-    @Setter
-    private String email;
+    @Column(name = "senha", nullable = true, length = 45)
+    private String senha;
 
-    @Getter
-    @Setter
-    private String imageUrl;
+    @Column(name = "status", nullable = true, length = 45)
+    private String status;
 
-    @Column(nullable = false)
-    @Getter
-    @Setter
-    private Boolean emailVerified = false;
+//    @Column(name = "foto_id_foto", nullable = false)
+//    private int fotoIdFoto;
 
-    @JsonIgnore
-    @Getter
-    @Setter
-    private String password;
+    @OneToOne(mappedBy = "usuarioByUsuarioIdUsuario")
+    private Construtor construtorsByIdUsuario;
 
-    @NotNull
-    @Getter
-    @Setter
-    @Enumerated(EnumType.STRING)
-    private AuthProvider provider;
+    @OneToOne(mappedBy = "usuarioByUsuarioIdUsuario")
+    private Corretor corretorsByIdUsuario;
 
-    private String providerId;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name="user_role",
-            joinColumns=@JoinColumn(name="user_id"),
-            inverseJoinColumns=@JoinColumn(name="role_id")
-    )
-    @Getter
-    @Setter
-    private List<Role> roles;
-
-    public <T> Usuario(String name, String email, String password, Stream<T> role) {
-        this.nome = name;
-        this.email = email;
-        this.password = password;
-        this.roles = (List<Role>) role;
-    }
-
-    public Usuario(Usuario usuario) {
-        this.id = usuario.getId();
-        this.nome = usuario.getNome();
-        this.login = usuario.getLogin();
-        this.email = usuario.getEmail();
-        this.imageUrl = usuario.getImageUrl();
-        this.emailVerified = usuario.getEmailVerified();
-        this.password = usuario.getPassword();
-        this.provider = usuario.getProvider();
-        this.providerId = usuario.getProviderId();
-        this.roles = usuario.getRoles();
-    }
+    @OneToOne
+    @JoinColumn(name = "foto_id_foto", referencedColumnName = "id_foto", nullable = false)
+    private FotoEntity fotoByFotoIdFoto;
 }
