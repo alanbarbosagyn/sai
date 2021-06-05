@@ -8,5 +8,5 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface ImovelRepository extends PagingAndSortingRepository<Imovel, Long> {
 
-    Page<Imovel> findAll(Pageable pageable);
+    Page<Imovel> findAllByStatusEquals(Pageable pageable, Integer status);
 }

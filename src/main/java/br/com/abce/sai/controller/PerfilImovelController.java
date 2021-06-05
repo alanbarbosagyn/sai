@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/perfil-imovel")
 @Api
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200", "https://csnnft.hospedagemelastica.com.br"})
 public class PerfilImovelController {
 
     private final PerfilImovelRepository perfilImovelRepository;

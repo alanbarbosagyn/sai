@@ -13,9 +13,15 @@ import br.com.abce.sai.representacao.ImovelModelAssembler;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +32,6 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -35,7 +39,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 @RequestMapping("/api/imoveis")
 @Api
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200", "https://csnnft.hospedagemelastica.com.br"})
 public class ImovelController {
 
 	private ImovelRepository imovelRepository;
@@ -61,13 +65,19 @@ public class ImovelController {
 
 	@ApiOperation(value = "Lista os imóvel.")
 	@GetMapping
-	public CollectionModel<EntityModel<ImovelDto>> findAll() {
+	public CollectionModel<Imovel> findAll(@PageableDefault(page = 0, size = 2)
+													@SortDefault.SortDefaults({
+															@SortDefault(sort = "dataCadastro", direction = Sort.Direction.DESC),
+															@SortDefault(sort = "descricao", direction = Sort.Direction.ASC)
+													}) Pageable pageable) {
 
-		List<EntityModel<ImovelDto>> employees = ((List<Imovel>) imovelRepository.findAll()).stream()
-				.map(assembler::toModel)
-				.collect(Collectors.toList());
+		Page<Imovel> imovels = imovelRepository.findAll(pageable);
 
-		return CollectionModel.of(employees);
+//		List<EntityModel<ImovelDto>> imovelsEntity = (imovels).stream()
+//				.map(assembler::toModel)
+//				.collect(Collectors.toList());
+
+		return PagedModel.of(imovels);
 	}
 	
 	@ApiOperation(value = "Consulta imóvel por ID.")
