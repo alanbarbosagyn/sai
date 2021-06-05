@@ -1,12 +1,7 @@
 package br.com.abce.sai;
 
 import br.com.abce.sai.config.AppProperties;
-import br.com.abce.sai.persistence.model.AuthProvider;
-import br.com.abce.sai.persistence.model.Imovel;
-import br.com.abce.sai.persistence.model.Usuario;
-import br.com.abce.sai.persistence.repo.ImovelRepository;
-import br.com.abce.sai.persistence.repo.UsuarioRepository;
-import org.springframework.boot.CommandLineRunner;
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -14,8 +9,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-
-import java.util.stream.Stream;
 
 @EnableJpaRepositories("br.com.abce.sai.persistence.repo") 
 @EntityScan("br.com.abce.sai.persistence.model")
@@ -25,6 +18,11 @@ public class SaiApplication extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SaiApplication.class, args);
+	}
+
+	@Bean
+	public ModelMapper modelMapper() {
+		return new ModelMapper();
 	}
 
 //	@Bean

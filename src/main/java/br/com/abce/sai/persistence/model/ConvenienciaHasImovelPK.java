@@ -1,21 +1,22 @@
-package br.com.abce.sai.persistence.model.entity;
+package br.com.abce.sai.persistence.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.Id;
 import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Embeddable
-public class ConvenienciaHasImovelEntityPK implements Serializable {
+public class ConvenienciaHasImovelPK implements Serializable {
 
     @Column(name = "conveniencia_id_conveniencia", nullable = false)
-    private int convenienciaIdConveniencia;
+    private Long convenienciaIdConveniencia;
 
     @Column(name = "imovel_id_imovel", nullable = false)
-    private int imovelIdImovel;
+    private Long imovelIdImovel;
 }

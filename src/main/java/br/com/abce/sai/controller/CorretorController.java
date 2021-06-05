@@ -4,12 +4,13 @@ import br.com.abce.sai.exception.DataValidationException;
 import br.com.abce.sai.exception.RecursoNotFoundException;
 import br.com.abce.sai.exception.ResourcedMismatchException;
 import br.com.abce.sai.persistence.model.Corretor;
+import br.com.abce.sai.persistence.model.Endereco;
 import br.com.abce.sai.persistence.repo.CorretorRepository;
+import br.com.abce.sai.persistence.repo.EnderecoRepository;
 import br.com.abce.sai.persistence.repo.UsuarioRepository;
 import br.com.abce.sai.representacao.CorretorAssembler;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -19,10 +20,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @RestController
@@ -35,25 +38,30 @@ public class CorretorController {
 
     private final UsuarioRepository usuarioRepository;
 
+    private final EnderecoRepository enderecoRepository;
+
     private final CorretorAssembler assembler;
 
-    public CorretorController(CorretorRepository corretorRepository, UsuarioRepository usuarioRepository, CorretorAssembler assembler) {
+    public CorretorController(CorretorRepository corretorRepository, UsuarioRepository usuarioRepository, EnderecoRepository enderecoRepository, CorretorAssembler assembler) {
         this.corretorRepository = corretorRepository;
         this.usuarioRepository = usuarioRepository;
+        this.enderecoRepository = enderecoRepository;
         this.assembler = assembler;
     }
 
     @ApiOperation(value = "Consulta todos os corretores de imóveis.")
     @GetMapping
-    public CollectionModel<EntityModel<Corretor>> findAll(@RequestParam @ApiParam(name = "CPF do Corretor.") @CPF(message = "O CPF é inválido.") final String cpf,
-                                                          @RequestParam @ApiParam(name = "Nº do CRECI do Corretor") final String creci) {
+    public CollectionModel<EntityModel<Corretor>> findAll(@RequestParam(name = "cpf", required = false) @CPF(message = "O CPF é inválido.") final String cpf,
+                                                          @RequestParam(name = "creci", required = false) final String creci) {
 
         CollectionModel<EntityModel<Corretor>> collectionModel = null;
 
         if (cpf != null || creci != null) {
 
-            collectionModel = (CollectionModel<EntityModel<Corretor>>) CollectionModel.of(corretorRepository.findByNumCreciOrCpf(creci, cpf)
-                    .orElseThrow(() -> new RecursoNotFoundException(Corretor.class, cpf + creci)));
+            Corretor corretor = corretorRepository.findByNumCreciOrCpf(creci, cpf)
+                    .orElseThrow(() -> new RecursoNotFoundException(Corretor.class, cpf + creci));
+
+            collectionModel = CollectionModel.of(Stream.of(corretor).map(assembler::toModel).collect(Collectors.toList()));
 
         } else {
 
@@ -78,7 +86,7 @@ public class CorretorController {
     @ApiOperation(value = "Cadastra um corretor de imóvel.")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<EntityModel<Corretor>> create(@Validated @RequestBody Corretor corretor) {
+    public ResponseEntity<EntityModel<Corretor>> create(@Valid @RequestBody Corretor corretor) {
 
         validaCorretorCadastrado(corretor);
 
@@ -86,7 +94,11 @@ public class CorretorController {
                 .findByIdUsuario(corretor.getUsuarioByUsuarioIdUsuario().getIdUsuario())
                 .orElseThrow(() -> new DataValidationException("Usuário não cadastrado.")));
 
-        corretor.setDataCadastro(new Date());///
+        corretor.setDataCadastro(new Date());
+
+        Endereco enderecoCorretor = enderecoRepository.save(corretor.getEnderecoByEnderecoIdEndereco());
+
+        corretor.setEnderecoByEnderecoIdEndereco(enderecoCorretor);
 
         EntityModel<Corretor> CorretorEntityModel = assembler.toModel(corretorRepository.save(corretor));
 
@@ -96,7 +108,7 @@ public class CorretorController {
 
     @ApiOperation(value = "Atualiza dados do perfil do imóvel.")
     @PutMapping("/{id}")
-    public ResponseEntity<EntityModel<Corretor>> updateImovel(@RequestBody Corretor newCorretor, @PathVariable Long id) {
+    public ResponseEntity<EntityModel<Corretor>> updateImovel(@RequestBody @Valid Corretor newCorretor, @PathVariable Long id) {
 
         if (newCorretor.getIdCorretor() != null && newCorretor.getIdCorretor().equals(id)) {
             throw new ResourcedMismatchException(id);
@@ -140,10 +152,11 @@ public class CorretorController {
 
     private void validaCorretorCadastrado(@RequestBody @Validated Corretor corretor) {
 
-        if (corretorRepository.findByCpfEquals(corretor.getCpf()))
-            throw new DataValidationException("Corretor com CPF já cadastrado.");
+        if (corretorRepository.findByCpfEquals(corretor.getCpf())
+                .isPresent()) throw new DataValidationException("Corretor com CPF já cadastrado.");
 
-        if (corretorRepository.findByNumCreciEquals(corretor.getNumCreci()))
+        if (corretorRepository.findByNumCreciEquals(corretor.getNumCreci())
+                .isPresent())
             throw new DataValidationException("Corretor com Nº de CRECI já cadastrado.");
     }
 }

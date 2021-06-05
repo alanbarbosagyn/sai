@@ -1,11 +1,12 @@
 package br.com.abce.sai.persistence.repo;
 
 import br.com.abce.sai.persistence.model.Imovel;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
-import java.util.List;
 
+public interface ImovelRepository extends PagingAndSortingRepository<Imovel, Long> {
 
-public interface ImovelRepository extends CrudRepository<Imovel, Long> {
-	
+    Page<Imovel> findAll(Pageable pageable);
 }

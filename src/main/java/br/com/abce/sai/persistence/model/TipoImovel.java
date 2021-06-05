@@ -1,16 +1,12 @@
 package br.com.abce.sai.persistence.model;
 
-import br.com.abce.sai.persistence.model.entity.CaracteristicaImovelEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.UniqueElements;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Collection;
 
 @Data
 @AllArgsConstructor
@@ -25,7 +21,7 @@ public class TipoImovel {
     private Long idTipoImovel;
 
     @NotNull(message = "A descrição não pode ser nulo.")
-    @Size(message = "A descrição deve onter entre 10 e 45 caracteres.", min = 10, max = 45)
+    @Size(message = "A descrição deve onter entre 10 e 45 caracteres.", min = 4, max = 45)
     @Column(name = "descricao", nullable = false, length = 45)
     private String descricao;
 

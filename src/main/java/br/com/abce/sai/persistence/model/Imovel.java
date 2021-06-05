@@ -1,19 +1,25 @@
 package br.com.abce.sai.persistence.model;
 
-import br.com.abce.sai.persistence.model.entity.*;
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
-import java.sql.Date;
 import java.util.Collection;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "imovel", schema = "sai", catalog = "")
+@JsonIdentityInfo(
+		generator = ObjectIdGenerators.PropertyGenerator.class,
+		property = "idImovel")
 public class Imovel {
 
 	@Id
@@ -69,15 +75,15 @@ public class Imovel {
 //
 //	@Column(name = "endereco_id_endereco", nullable = false)
 //	private int enderecoIdEndereco;
-
+//
 //	@Column(name = "tipo_imovel_id_tipo_imovel", nullable = false)
 //	private int tipoImovelIdTipoImovel;
 //
 //	@Column(name = "perfil_imovel_id_perfil_imovel", nullable = false)
 //	private int perfilImovelIdPerfilImovel;
 
-	@OneToMany(mappedBy = "imovelByImovelIdImovel")
-	private Collection<ConvenienciaHasImovelEntity> convenienciaHasImovelsByIdImovel;
+	@OneToMany(mappedBy = "imovelByImovelIdImovel", cascade = CascadeType.ALL)
+	private Collection<ConvenienciaHasImovel> convenienciaHasImovelsByIdImovel;
 
 	@NotNull(message = "Construtor do imóvel é obrigatório")
 	@Valid
@@ -87,7 +93,7 @@ public class Imovel {
 
 	@NotNull(message = "endereco é obrigatório")
 	@Valid
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "endereco_id_endereco", referencedColumnName = "id_endereco", nullable = false)
 	private Endereco enderecoByEnderecoIdEndereco;
 
@@ -104,10 +110,14 @@ public class Imovel {
 	private PerfilImovel perfilImovelByPerfilImovelIdPerfilImovel;
 
 	@Valid
-	@OneToMany(mappedBy = "imovelByImovelIdImovel")
-	private Collection<ImovelHasCaracteristicaImovelEntity> imovelHasCaracteristicaImovelsByIdImovel;
+	@OneToMany(mappedBy = "imovelByImovelIdImovel", cascade = CascadeType.ALL)
+	private Collection<ImovelHasCaracteristicaImovel> imovelHasCaracteristicaImovelsByIdImovel;
 
 	@Valid
 	@OneToMany(mappedBy = "imovelByImovelIdImovel")
-	private Collection<ImovelHasFotoEntity> imovelHasFotosByIdImovel;
+	private Collection<ImovelHasFoto> imovelHasFotosByIdImovel;
+
+//	@Valid
+//	@OneToMany(mappedBy = "imovelByImovelId")
+//	private Collection<CorretorImovelFavorito> imovelHasCorretorFavorito;
 }

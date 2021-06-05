@@ -1,7 +1,9 @@
-package br.com.abce.sai.persistence.model.entity;
+package br.com.abce.sai.persistence.model;
 
-import br.com.abce.sai.persistence.model.Imovel;
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -10,19 +12,10 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "imovel_has_caracteristica_imovel", schema = "sai", catalog = "")
-//@IdClass(ImovelHasCaracteristicaImovelEntityPK.class)
-public class ImovelHasCaracteristicaImovelEntity {
-
-//    @Id
-//    @Column(name = "imovel_id_imovel", nullable = false)
-//    private int imovelIdImovel;
-//
-//    @Id
-//    @Column(name = "caracteristica_imovel_id_caracteristica_imovel", nullable = false)
-//    private int caracteristicaImovelIdCaracteristicaImovel;
+public class ImovelHasCaracteristicaImovel {
 
     @EmbeddedId
-    private ImovelHasCaracteristicaImovelEntityPK id;
+    private ImovelHasCaracteristicaImovelPK id;
 
     @Column(name = "valor", nullable = true, length = 45)
     private String valor;
@@ -30,10 +23,11 @@ public class ImovelHasCaracteristicaImovelEntity {
     @MapsId("imovelIdImovel")
     @ManyToOne
     @JoinColumn(name = "imovel_id_imovel", referencedColumnName = "id_imovel", nullable = false)
+    @JsonIgnore
     private Imovel imovelByImovelIdImovel;
 
     @MapsId("caracteristicaImovelIdCaracteristicaImovel")
     @ManyToOne
     @JoinColumn(name = "caracteristica_imovel_id_caracteristica_imovel", referencedColumnName = "id_caracteristica_imovel", nullable = false)
-    private CaracteristicaImovelEntity caracteristicaImovelByCaracteristicaImovelIdCaracteristicaImovel;
+    private CaracteristicaImovel caracteristicaImovelByCaracteristicaImovelIdCaracteristicaImovel;
 }

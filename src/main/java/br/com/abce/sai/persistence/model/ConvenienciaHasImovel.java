@@ -1,6 +1,8 @@
-package br.com.abce.sai.persistence.model.entity;
+package br.com.abce.sai.persistence.model;
 
-import br.com.abce.sai.persistence.model.Imovel;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,11 +15,11 @@ import javax.persistence.*;
 @Entity
 @Table(name = "conveniencia_has_imovel", schema = "sai", catalog = "")
 //@IdClass(ConvenienciaHasImovelEntityPK.class)
-public class ConvenienciaHasImovelEntity {
+public class ConvenienciaHasImovel {
 
 
     @EmbeddedId
-    private ConvenienciaHasImovelEntityPK id;
+    private ConvenienciaHasImovelPK id;
 
 //    @Id
 //    @Column(name = "conveniencia_id_conveniencia", nullable = false)
@@ -30,10 +32,16 @@ public class ConvenienciaHasImovelEntity {
     @MapsId("convenienciaIdConveniencia")
     @ManyToOne
     @JoinColumn(name = "conveniencia_id_conveniencia", referencedColumnName = "id_conveniencia", nullable = false)
-    private ConvenienciaEntity convenienciaByConvenienciaIdConveniencia;
+    @JsonBackReference
+    @JsonIgnoreProperties
+    @JsonIgnore
+    private Conveniencia convenienciaByConvenienciaIdConveniencia;
 
     @MapsId("imovelIdImovel")
     @ManyToOne
     @JoinColumn(name = "imovel_id_imovel", referencedColumnName = "id_imovel", nullable = false)
+    @JsonBackReference
+    @JsonIgnoreProperties
+    @JsonIgnore
     private Imovel imovelByImovelIdImovel;
 }

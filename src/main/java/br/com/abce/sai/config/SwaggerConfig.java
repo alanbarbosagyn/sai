@@ -21,10 +21,8 @@ import springfox.documentation.service.SecurityReference;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger.web.*;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import javax.websocket.OnError;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -42,6 +40,8 @@ public class SwaggerConfig {
 				.build()
 				.useDefaultResponseMessages(false)
 				.globalResponseMessage(RequestMethod.GET, responseMessageForGET())
+				.globalResponseMessage(RequestMethod.POST, responseMessageForPOSTorPUT())
+				.globalResponseMessage(RequestMethod.PUT, responseMessageForPOSTorPUT())
 				.securitySchemes(Arrays.asList(new ApiKey("Token Access", HttpHeaders.AUTHORIZATION, In.HEADER.name())))
 				.securityContexts(Arrays.asList(securityContext()));
 	}
@@ -61,6 +61,29 @@ public class SwaggerConfig {
 			add(new ResponseMessageBuilder()
 					.code(403)
 					.message("Forbidden!")
+					.build());
+		}};
+	}
+
+	private List<ResponseMessage> responseMessageForPOSTorPUT() {
+		return new ArrayList<ResponseMessage>() {{
+			add(new ResponseMessageBuilder()
+					.code(500)
+					.message("Internal Error")
+					.responseModel(new ModelRef("Error"))
+					.build());
+			add(new ResponseMessageBuilder()
+					.code(404)
+					.message("Not found")
+					.responseModel(new ModelRef("Error"))
+					.build());
+			add(new ResponseMessageBuilder()
+					.code(403)
+					.message("Forbidden!")
+					.build());
+			add(new ResponseMessageBuilder()
+					.code(201)
+					.message("Created!")
 					.build());
 		}};
 	}

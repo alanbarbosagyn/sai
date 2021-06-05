@@ -1,7 +1,8 @@
 package br.com.abce.sai.persistence.model;
 
-import br.com.abce.sai.persistence.model.entity.FotoEntity;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -29,13 +30,13 @@ public class Usuario {
 //    @Column(name = "foto_id_foto", nullable = false)
 //    private int fotoIdFoto;
 
-    @OneToOne(mappedBy = "usuarioByUsuarioIdUsuario")
-    private Construtor construtorsByIdUsuario;
-
-    @OneToOne(mappedBy = "usuarioByUsuarioIdUsuario")
-    private Corretor corretorsByIdUsuario;
+//    @OneToOne(mappedBy = "usuarioByUsuarioIdUsuario", fetch = FetchType.LAZY)
+//    private Construtor construtorsByIdUsuario;
+//
+//    @OneToOne(mappedBy = "usuarioByUsuarioIdUsuario", fetch = FetchType.LAZY)
+//    private Corretor corretorsByIdUsuario;
 
     @OneToOne
-    @JoinColumn(name = "foto_id_foto", referencedColumnName = "id_foto", nullable = false)
-    private FotoEntity fotoByFotoIdFoto;
+    @JoinColumn(name = "foto_id_foto", referencedColumnName = "id_foto")
+    private Foto fotoByFotoIdFoto;
 }

@@ -1,30 +1,37 @@
-package br.com.abce.sai.persistence.model.entity;
+package br.com.abce.sai.persistence.model;
 
-import br.com.abce.sai.persistence.model.TipoImovel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Collection;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "caracteristica_imovel", schema = "sai", catalog = "")
-public class CaracteristicaImovelEntity {
+public class CaracteristicaImovel {
 
 
     @Id
     @Column(name = "id_caracteristica_imovel", nullable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int idCaracteristicaImovel;
+    private Long idCaracteristicaImovel;
 
+    @NotNull(message = "A descrição é obrigatória")
+    @Size(message = "Tamanho do campo descrição deve ser entre 3 e 45 caracteres", min = 3, max = 45)
     @Column(name = "descricao", nullable = true, length = 45)
     private String descricao;
 
-    @Column(name = "tipo", nullable = true, length = 45)
+    @NotEmpty(message = "O tipo é obrigatório.")
+    @Pattern(message = "O tipo deve ser 1 - Boleano; 2 - Númerico, 3 - Descritivo.", regexp = "[1-3]?")
+    @Column(name = "tipo", nullable = true)
     private String tipo;
 
     @Column(name = "icone", nullable = true, length = 45)
@@ -40,13 +47,12 @@ public class CaracteristicaImovelEntity {
 //    private int tipoImovelIdTipoImovel;
 
     @ManyToOne
+    @Valid
     @JoinColumn(name = "tipo_imovel_id_tipo_imovel", referencedColumnName = "id_tipo_imovel", nullable = false)
     private TipoImovel tipoImovelByTipoImovelIdTipoImovel;
 
-    @OneToMany(mappedBy = "caracteristicaImovelByCaracteristicaImovelIdCaracteristicaImovel1")
-    private Collection<CaracteristicaImovelListaEntity> caracteristicaImovelListasByIdCaracteristicaImovel;
-
-    @OneToMany(mappedBy = "caracteristicaImovelByCaracteristicaImovelIdCaracteristicaImovel")
-    private Collection<ImovelHasCaracteristicaImovelEntity> imovelHasCaracteristicaImovelsByIdCaracteristicaImovel;
+//    @OneToMany(mappedBy = "caracteristicaImovelByCaracteristicaImovelIdCaracteristicaImovel")
+//    @JsonIgnore
+//    private Collection<ImovelHasCaracteristicaImovel> imovelHasCaracteristicaImovelsByIdCaracteristicaImovel;
 
 }

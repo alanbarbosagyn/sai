@@ -1,15 +1,16 @@
 package br.com.abce.sai.persistence.model;
 
-import br.com.abce.sai.persistence.model.Endereco;
-import br.com.abce.sai.persistence.model.Usuario;
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.br.CPF;
 
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.Date;
 
 @Data
@@ -55,6 +56,7 @@ public class Corretor {
 
     @OneToOne
     @JoinColumn(name = "usuario_id_usuario", referencedColumnName = "id_usuario", nullable = false, updatable = false)
+    @JsonBackReference
     private Usuario usuarioByUsuarioIdUsuario;
 
     @NotNull(message = "endereço é obrigatório")
@@ -62,4 +64,7 @@ public class Corretor {
     @ManyToOne
     @JoinColumn(name = "endereco_id_endereco", referencedColumnName = "id_endereco", nullable = false)
     private Endereco enderecoByEnderecoIdEndereco;
+
+    @OneToMany(mappedBy = "corretorByCorretorId")
+    private Collection<CorretorImovelFavorito> imovelHasFavorito;
 }

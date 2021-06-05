@@ -1,8 +1,9 @@
 package br.com.abce.sai.config;
 
 import br.com.abce.sai.exception.DataValidationException;
-import br.com.abce.sai.exception.ResourcedMismatchException;
+import br.com.abce.sai.exception.InfraestructureException;
 import br.com.abce.sai.exception.RecursoNotFoundException;
+import br.com.abce.sai.exception.ResourcedMismatchException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import javax.validation.ConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -38,7 +38,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
           new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
-    @ExceptionHandler({
+    @ExceptionHandler({InfraestructureException.class,
             DataIntegrityViolationException.class })
     public ResponseEntity<Object> handleHttpMessageNotWritable(
             Exception ex, WebRequest request) {

@@ -1,6 +1,7 @@
 package br.com.abce.sai.controller;
 
 
+import br.com.abce.sai.dto.ConstrutorDto;
 import br.com.abce.sai.exception.DataValidationException;
 import br.com.abce.sai.exception.RecursoNotFoundException;
 import br.com.abce.sai.exception.ResourcedMismatchException;
@@ -13,6 +14,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.hibernate.validator.constraints.br.CNPJ;
+import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -21,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
@@ -39,15 +42,18 @@ public class ConstrutorController {
 
     private final ConstrutorAssembler assembler;
 
-    public ConstrutorController(ConstrutorRepository construtorRepository, UsuarioRepository usuarioRepository, ConstrutorAssembler assembler) {
+    private final ModelMapper modelMapper;
+
+    public ConstrutorController(ConstrutorRepository construtorRepository, UsuarioRepository usuarioRepository, ConstrutorAssembler assembler, ModelMapper modelMapper) {
         this.construtorRepository = construtorRepository;
         this.usuarioRepository = usuarioRepository;
         this.assembler = assembler;
+        this.modelMapper = modelMapper;
     }
 
     @ApiOperation(value = "Consulta todos os construtores de imóveis.")
     @GetMapping
-    public CollectionModel<EntityModel<Construtor>> findAll(@RequestParam @ApiParam(name = "CNPJ do construtor(a)") @CNPJ(message = "O CNPJ é inválido.") final String cnpj) {
+    public CollectionModel<EntityModel<ConstrutorDto>> findAll(@RequestParam(name = "cnpj", required = false) @ApiParam(name = "CNPJ do construtor(a)") @CNPJ(message = "O CNPJ é inválido.") final String cnpj) {
 
         CollectionModel collectionModel = null;
 
@@ -68,7 +74,7 @@ public class ConstrutorController {
 
     @ApiOperation(value = "Consulta um construtor de imóvel por ID.")
     @GetMapping("{id}")
-    public EntityModel<Construtor> findByOne(@PathVariable @NotNull(message = "Id do contrutor obrigatório.") Long id) {
+    public EntityModel<ConstrutorDto> findByOne(@PathVariable @NotNull(message = "Id do contrutor obrigatório.") Long id) {
 
         Construtor construtor = construtorRepository.findById(id)
                 .orElseThrow(() -> new RecursoNotFoundException(Construtor.class, id));
@@ -79,16 +85,18 @@ public class ConstrutorController {
     @ApiOperation(value = "Cadastra um construtor de imóvel.")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<EntityModel<Construtor>> create(@Validated @RequestBody Construtor construtor) {
+    public ResponseEntity<EntityModel<ConstrutorDto>> create(@Valid @RequestBody ConstrutorDto construtor) {
 
         validaConstrutorCadastrado(construtor);
 
-        Optional<Usuario> usuario = usuarioRepository.findByIdUsuario(construtor.getUsuarioByUsuarioIdUsuario().getIdUsuario());
+        Optional<Usuario> usuario = usuarioRepository.findByIdUsuario(construtor.getUsuarioId());
 
-        construtor.setUsuarioByUsuarioIdUsuario(usuario.orElseThrow(() -> new DataValidationException("Usuário não cadastrado.")));
-        construtor.setDataCadastro(new Date());
+        Construtor entity = modelMapper.map(construtor, Construtor.class);
 
-        EntityModel<Construtor> ConstrutorEntityModel = assembler.toModel(construtorRepository.save(construtor));
+        entity.setUsuarioByUsuarioIdUsuario(usuario.orElseThrow(() -> new DataValidationException("Usuário não cadastrado.")));
+        entity.setDataCadastro(new Date());
+
+        EntityModel<ConstrutorDto> ConstrutorEntityModel = assembler.toModel(construtorRepository.save(entity));
 
         return ResponseEntity.created(ConstrutorEntityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(ConstrutorEntityModel);
@@ -96,37 +104,38 @@ public class ConstrutorController {
 
     @ApiOperation(value = "Atualiza dados do construtor do imóvel.")
     @PutMapping("/{id}")
-    public ResponseEntity<EntityModel<Construtor>> updateImovel(@RequestBody Construtor newConstrutor, @PathVariable Long id) {
+    public ResponseEntity<EntityModel<ConstrutorDto>> updateImovel(@RequestBody @Valid ConstrutorDto newConstrutor, @PathVariable Long id) {
 
-        if (newConstrutor.getIdConstrutor() != null && newConstrutor.getIdConstrutor().equals(id)) {
+        if (newConstrutor.getId() != null && newConstrutor.getId().equals(id)) {
             throw new ResourcedMismatchException(id);
         }
 
         validaConstrutorCadastrado(newConstrutor);
 
-        Construtor ConstrutorUpdaded = construtorRepository.findById(id)
+        Construtor construtorUpdaded = construtorRepository.findById(id)
                 .map(construtor -> {
                     construtor.setCnpj(newConstrutor.getCnpj());
                     construtor.setNome(newConstrutor.getNome());
                     construtor.setUsuarioByUsuarioIdUsuario(usuarioRepository
-                            .findByIdUsuario(construtor.getUsuarioByUsuarioIdUsuario().getIdUsuario())
+                            .findByIdUsuario(newConstrutor.getUsuarioId())
                             .orElseThrow(() -> new DataValidationException("Usuário não cadastrado.")));
 
                     return construtorRepository.save(construtor);
                 })
                 .orElseGet(() -> {
-                    newConstrutor.setIdConstrutor(id);
-                    return construtorRepository.save(newConstrutor);
+                    Construtor construtor = modelMapper.map(newConstrutor, Construtor.class);
+                    construtor.setIdConstrutor(id);
+                    return construtorRepository.save(construtor);
                 });
 
-        EntityModel<Construtor> ConstrutorEntityModel = assembler.toModel(ConstrutorUpdaded);
+        EntityModel<ConstrutorDto> ConstrutorEntityModel = assembler.toModel(construtorUpdaded);
 
         return ResponseEntity
                 .created(ConstrutorEntityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(ConstrutorEntityModel);
     }
 
-    private void validaConstrutorCadastrado(@RequestBody @Validated Construtor construtor) {
+    private void validaConstrutorCadastrado(@RequestBody @Validated ConstrutorDto construtor) {
 
         if (construtorRepository.existsByCnpj(construtor.getCnpj()))
             throw new DataValidationException("Construtor com CNPJ já cadastrado.");

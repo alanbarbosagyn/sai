@@ -2,9 +2,8 @@ package br.com.abce.sai.controller;
 
 
 import br.com.abce.sai.exception.DataValidationException;
-import br.com.abce.sai.exception.ResourcedMismatchException;
 import br.com.abce.sai.exception.RecursoNotFoundException;
-import br.com.abce.sai.persistence.model.PerfilImovel;
+import br.com.abce.sai.exception.ResourcedMismatchException;
 import br.com.abce.sai.persistence.model.TipoImovel;
 import br.com.abce.sai.persistence.repo.TipoImoveRepository;
 import br.com.abce.sai.representacao.TipoImovelAssembler;
@@ -18,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,7 +53,7 @@ public class TipoImovelController {
     @ApiOperation(value = "Cadastra um novo tipo de imóvel.")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<EntityModel<TipoImovel>> create(@RequestBody TipoImovel tipoImovel) {
+    public ResponseEntity<EntityModel<TipoImovel>> create(@RequestBody @Valid TipoImovel tipoImovel) {
 
         validaDescricaoPerfilCadastrado(tipoImovel);
 
@@ -65,7 +65,7 @@ public class TipoImovelController {
 
     @ApiOperation(value = "Atualiza dados do imóvel.")
     @PutMapping("/{id}")
-    public ResponseEntity<EntityModel<TipoImovel>> updateImovel(@RequestBody TipoImovel newTipoImovel, @PathVariable Long id) {
+    public ResponseEntity<EntityModel<TipoImovel>> updateImovel(@RequestBody @Valid TipoImovel newTipoImovel, @PathVariable Long id) {
 
         if (newTipoImovel.getIdTipoImovel() != null && newTipoImovel.getIdTipoImovel().equals(id)) {
             throw new ResourcedMismatchException(id);

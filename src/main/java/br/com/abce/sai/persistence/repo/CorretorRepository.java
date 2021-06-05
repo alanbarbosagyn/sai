@@ -7,9 +7,9 @@ import java.util.Optional;
 
 public interface CorretorRepository extends CrudRepository<Corretor, Long> {
 
-    boolean findByNumCreciEquals(final String numero);
+    Optional<Corretor> findByNumCreciEquals(final String numero);
 
-    boolean findByCpfEquals(final String cpf);
+    Optional<Corretor> findByCpfEquals(final String cpf);
 
     Optional<Corretor> findByNumCreciOrCpf(final String numCreci, final String cpf);
 }
