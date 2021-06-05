@@ -161,7 +161,7 @@ public class ImovelController {
 		imovelHasFoto.setFotoByFotoIdFoto(foto);
 
 		EntityModel<ImovelHasFoto> imovelEntityModel = EntityModel.of(imovelFotoRepository.save(imovelHasFoto)
-			,linkTo(methodOn(FotoController.class).findByOne(foto.getIdFoto())).withSelfRel());
+			,linkTo(methodOn(FotoController.class).findByOne(foto.getIdFoto(), null, null)).withSelfRel());
 
 		return ResponseEntity.created(imovelEntityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
 				.body(imovelEntityModel);
@@ -178,7 +178,10 @@ public class ImovelController {
 
 		for (ImovelHasFoto imovelHasFoto : imovelFotoRepository.findImovelHasFotosById_ImovelIdImovel(idImovel)) {
 			EntityModel<ImovelHasFoto> imoveis = EntityModel.of(imovelHasFoto,
-					linkTo(methodOn(ImovelController.class).findAllFoto(idImovel)).withRel("fotos-imovel"));
+					linkTo(methodOn(FotoController.class)
+							.findByOne(imovelHasFoto.getId().getFotoIdFoto(), Const.MIN_WITH, Const.MIN_HEIGHT)).withSelfRel(),
+					linkTo(methodOn(ImovelController.class)
+							.findAllFoto(imovelHasFoto.getId().getImovelIdImovel())).withRel("fotos-imovel"));
 			imovelHasFotoCollection.add(imoveis);
 		}
 

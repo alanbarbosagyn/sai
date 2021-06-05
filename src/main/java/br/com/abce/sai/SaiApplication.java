@@ -1,6 +1,8 @@
 package br.com.abce.sai;
 
 import br.com.abce.sai.config.AppProperties;
+import br.com.abce.sai.converter.ImageConverter;
+import br.com.abce.sai.converter.impl.ImageConverterGraphics2D;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,7 +12,7 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@EnableJpaRepositories("br.com.abce.sai.persistence.repo") 
+@EnableJpaRepositories("br.com.abce.sai.persistence.repo")
 @EntityScan("br.com.abce.sai.persistence.model")
 @EnableConfigurationProperties(AppProperties.class)
 @SpringBootApplication
@@ -23,6 +25,11 @@ public class SaiApplication extends SpringBootServletInitializer {
 	@Bean
 	public ModelMapper modelMapper() {
 		return new ModelMapper();
+	}
+
+	@Bean
+	public ImageConverter imageConverter() {
+		return new ImageConverterGraphics2D();
 	}
 
 //	@Bean

@@ -1,5 +1,6 @@
 package br.com.abce.sai.controller;
 
+import br.com.abce.sai.converter.ImageConverter;
 import br.com.abce.sai.exception.InfraestructureException;
 import br.com.abce.sai.exception.RecursoNotFoundException;
 import br.com.abce.sai.persistence.model.Foto;
@@ -15,8 +16,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,20 +39,37 @@ public class FotoController {
 
     private FotoRepository fotoRepository;
 
-    public FotoController(FotoRepository fotoRepository) {
+    private ImageConverter imageConverter;
+
+    public FotoController(FotoRepository fotoRepository, ImageConverter imageConverter) {
         this.fotoRepository = fotoRepository;
+        this.imageConverter = imageConverter;
     }
 
     @ApiOperation(value = "Consulta uma foto.")
-    @GetMapping(value = "{id}", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
-    public ResponseEntity<byte[]> findByOne(@PathVariable @NotNull(message = "Id da foto obrigatório.")
-                                                @NotNull(message = "foto é obrigatório.")Long id) {
+    @GetMapping(value = "{id}", produces = {MediaType.IMAGE_JPEG_VALUE,
+                                                MediaType.IMAGE_PNG_VALUE,
+                                                MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<byte[]> findByOne(
+            @PathVariable @NotNull(message = "Id da foto obrigatório.")
+            @NotNull(message = "foto é obrigatório.") Long id,
+            @RequestParam(required = false) @Min(message = "Valor mínimo de 30px", value = 30) Integer with,
+            @RequestParam(required = false) @Max(message = "Valor máximo de 300px", value = 300) Integer lenght) {
 
         Foto foto = fotoRepository.findById(id)
                 .orElseThrow(() -> new RecursoNotFoundException(Foto.class, id));
 
+        if (with != null && lenght != null) {
+
+            byte[] reSizedImage = getReSizedImage(foto, with, lenght);
+
+            foto.setImagem(reSizedImage);
+        }
+
         return ResponseEntity.ok(foto.getImagem());
     }
+
+
 
     @ApiOperation(value = "Upload de uma foto.")
     @PostMapping
@@ -56,7 +81,7 @@ public class FotoController {
         Foto fotoSaved = fotoRepository.save(foto);
 
         EntityModel<Foto> fotoModel = EntityModel.of(fotoSaved,
-                linkTo(methodOn(FotoController.class).findByOne(fotoSaved.getIdFoto())).withSelfRel());
+                linkTo(methodOn(FotoController.class).findByOne(fotoSaved.getIdFoto(), null, null)).withSelfRel());
 
         return ResponseEntity.created(fotoModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(fotoModel);
@@ -71,6 +96,28 @@ public class FotoController {
         fotoRepository.deleteById(id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    private byte[] getReSizedImage(Foto foto, Integer with, Integer height) {
+
+        try {
+
+            InputStream is = new ByteArrayInputStream(foto.getImagem());
+            BufferedImage bi = ImageIO.read(is);
+
+            bi = imageConverter.resizeImageGr(bi, with, height);
+
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+            ImageIO.write(bi, foto.getTipo().split("/")[1], output);
+
+            return output.toByteArray();
+
+        } catch (IOException ex) {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, ex.getMessage(), ex.getSuppressed());
+            throw new InfraestructureException(ex);
+        }
+
     }
 
     private Foto getFoto(MultipartFile multipartFile) {
