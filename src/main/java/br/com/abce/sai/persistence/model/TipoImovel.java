@@ -17,7 +17,7 @@ public class TipoImovel {
 
     @Id
     @Column(name = "id_tipo_imovel", nullable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idTipoImovel;
 
     @NotNull(message = "A descrição não pode ser nulo.")

@@ -19,7 +19,7 @@ public class Construtor {
 
     @Id
     @Column(name = "id_construtor", nullable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idConstrutor;
 
     @Column(name = "nome", nullable = true, length = 45)

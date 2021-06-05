@@ -18,7 +18,7 @@ public class Endereco {
 
     @Id
     @Column(name = "id_endereco", nullable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idEndereco;
 
     @NotBlank(message = "O cep é obritatório.")

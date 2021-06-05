@@ -17,7 +17,7 @@ public class PerfilImovel {
 
     @Id
     @Column(name = "id_perfil_imovel", nullable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idPerfilImovel;
 
     @NotBlank(message = "A descrição do perfil é obritatória.")

@@ -21,7 +21,7 @@ import java.util.Date;
 public class Corretor {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_corretor", nullable = false)
     private Long idCorretor;
 

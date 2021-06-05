@@ -15,7 +15,7 @@ public class Conveniencia {
 
     @Id
     @Column(name = "id_conveniencia", nullable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idConveniencia;
 
     @Column(name = "descricao", nullable = false, length = 45)

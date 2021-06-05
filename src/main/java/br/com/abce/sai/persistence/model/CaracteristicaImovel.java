@@ -21,7 +21,7 @@ public class CaracteristicaImovel {
 
     @Id
     @Column(name = "id_caracteristica_imovel", nullable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idCaracteristicaImovel;
 
     @NotNull(message = "A descrição é obrigatória")

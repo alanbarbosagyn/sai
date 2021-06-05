@@ -17,7 +17,7 @@ public class Foto {
 
     @Id
     @Column(name = "id_foto", nullable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idFoto;
 
     @NotNull(message = "foto é obrigatório.")
