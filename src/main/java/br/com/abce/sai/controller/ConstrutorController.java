@@ -110,8 +110,6 @@ public class ConstrutorController {
             throw new ResourcedMismatchException(id);
         }
 
-        validaConstrutorCadastrado(newConstrutor);
-
         Construtor construtorUpdaded = construtorRepository.findById(id)
                 .map(construtor -> {
                     construtor.setCnpj(newConstrutor.getCnpj());
