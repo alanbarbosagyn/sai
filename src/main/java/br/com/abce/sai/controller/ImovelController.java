@@ -3,7 +3,6 @@ package br.com.abce.sai.controller;
 import br.com.abce.sai.dto.ImovelDto;
 import br.com.abce.sai.exception.DataValidationException;
 import br.com.abce.sai.exception.RecursoNotFoundException;
-import br.com.abce.sai.exception.ResourcedMismatchException;
 import br.com.abce.sai.persistence.model.*;
 import br.com.abce.sai.persistence.repo.ConstrutorRepository;
 import br.com.abce.sai.persistence.repo.FotoRepository;
@@ -117,9 +116,9 @@ public class ImovelController {
 	@ApiOperation(value = "Atualiza dados do imóvel.")
 	@PutMapping("/{id}")
     public ResponseEntity<EntityModel<ImovelDto>> updateImovel(@RequestBody @Valid ImovelDto newImovel, @PathVariable Long id) {
-        if (newImovel.getIdImovel() != null && newImovel.getIdImovel().equals(id)) {
-          throw new ResourcedMismatchException(id);
-        }
+//        if (newImovel.getIdImovel() != null && newImovel.getIdImovel().equals(id)) {
+//          throw new ResourcedMismatchException(id);
+//        }
 
 		Imovel imovelUpdaded = imovelRepository.findById(id)
 			.map(imovel -> {

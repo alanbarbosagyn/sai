@@ -3,7 +3,6 @@ package br.com.abce.sai.controller;
 
 import br.com.abce.sai.exception.DataValidationException;
 import br.com.abce.sai.exception.RecursoNotFoundException;
-import br.com.abce.sai.exception.ResourcedMismatchException;
 import br.com.abce.sai.persistence.model.TipoImovel;
 import br.com.abce.sai.persistence.repo.TipoImoveRepository;
 import br.com.abce.sai.representacao.TipoImovelAssembler;
@@ -67,9 +66,9 @@ public class TipoImovelController {
     @PutMapping("/{id}")
     public ResponseEntity<EntityModel<TipoImovel>> updateImovel(@RequestBody @Valid TipoImovel newTipoImovel, @PathVariable Long id) {
 
-        if (newTipoImovel.getIdTipoImovel() != null && newTipoImovel.getIdTipoImovel().equals(id)) {
-            throw new ResourcedMismatchException(id);
-        }
+//        if (newTipoImovel.getIdTipoImovel() != null && newTipoImovel.getIdTipoImovel().equals(id)) {
+//            throw new ResourcedMismatchException(id);
+//        }
 
         validaDescricaoPerfilCadastrado(newTipoImovel);
 

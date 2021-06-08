@@ -2,7 +2,6 @@ package br.com.abce.sai.controller;
 
 import br.com.abce.sai.exception.DataValidationException;
 import br.com.abce.sai.exception.RecursoNotFoundException;
-import br.com.abce.sai.exception.ResourcedMismatchException;
 import br.com.abce.sai.persistence.model.Corretor;
 import br.com.abce.sai.persistence.model.Endereco;
 import br.com.abce.sai.persistence.repo.CorretorRepository;
@@ -110,9 +109,9 @@ public class CorretorController {
     @PutMapping("/{id}")
     public ResponseEntity<EntityModel<Corretor>> updateImovel(@RequestBody @Valid Corretor newCorretor, @PathVariable Long id) {
 
-        if (newCorretor.getIdCorretor() != null && newCorretor.getIdCorretor().equals(id)) {
-            throw new ResourcedMismatchException(id);
-        }
+//        if (newCorretor.getIdCorretor() != null && newCorretor.getIdCorretor().equals(id)) {
+//            throw new ResourcedMismatchException(id);
+//        }
 
         validaCorretorCadastrado(newCorretor);
 

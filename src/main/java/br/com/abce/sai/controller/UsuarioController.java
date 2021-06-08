@@ -2,7 +2,6 @@ package br.com.abce.sai.controller;
 
 import br.com.abce.sai.exception.DataValidationException;
 import br.com.abce.sai.exception.RecursoNotFoundException;
-import br.com.abce.sai.exception.ResourcedMismatchException;
 import br.com.abce.sai.persistence.model.Usuario;
 import br.com.abce.sai.persistence.repo.FotoRepository;
 import br.com.abce.sai.persistence.repo.UsuarioRepository;
@@ -81,9 +80,9 @@ public class UsuarioController {
     @PutMapping("/{id}")
     public ResponseEntity<EntityModel<Usuario>> update(@RequestBody @Valid Usuario newUsuario, @PathVariable Long id) {
 
-        if (newUsuario.getIdUsuario() != null && newUsuario.getIdUsuario().equals(id)) {
-            throw new ResourcedMismatchException(id);
-        }
+//        if (newUsuario.getIdUsuario() != null && newUsuario.getIdUsuario().equals(id)) {
+//            throw new ResourcedMismatchException(id);
+//        }
 
         Usuario tipoImovelUpdated = usuarioRepository.findById(id)
                 .map(usuario -> {

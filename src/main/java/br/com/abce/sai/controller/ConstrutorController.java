@@ -4,7 +4,6 @@ package br.com.abce.sai.controller;
 import br.com.abce.sai.dto.ConstrutorDto;
 import br.com.abce.sai.exception.DataValidationException;
 import br.com.abce.sai.exception.RecursoNotFoundException;
-import br.com.abce.sai.exception.ResourcedMismatchException;
 import br.com.abce.sai.persistence.model.Construtor;
 import br.com.abce.sai.persistence.model.Usuario;
 import br.com.abce.sai.persistence.repo.ConstrutorRepository;
@@ -106,9 +105,9 @@ public class ConstrutorController {
     @PutMapping("/{id}")
     public ResponseEntity<EntityModel<ConstrutorDto>> updateImovel(@RequestBody @Valid ConstrutorDto newConstrutor, @PathVariable Long id) {
 
-        if (newConstrutor.getId() != null && newConstrutor.getId().equals(id)) {
-            throw new ResourcedMismatchException(id);
-        }
+//        if (newConstrutor.getId() != null && newConstrutor.getId().equals(id)) {
+//            throw new ResourcedMismatchException(id);
+//        }
 
         Construtor construtorUpdaded = construtorRepository.findById(id)
                 .map(construtor -> {

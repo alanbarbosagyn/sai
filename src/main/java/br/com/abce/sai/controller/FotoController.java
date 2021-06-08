@@ -5,6 +5,7 @@ import br.com.abce.sai.exception.InfraestructureException;
 import br.com.abce.sai.exception.RecursoNotFoundException;
 import br.com.abce.sai.persistence.model.Foto;
 import br.com.abce.sai.persistence.repo.FotoRepository;
+import br.com.abce.sai.util.LoggerUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.hateoas.EntityModel;
@@ -25,8 +26,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -114,7 +113,7 @@ public class FotoController {
             return output.toByteArray();
 
         } catch (IOException ex) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, ex.getMessage(), ex.getSuppressed());
+            LoggerUtil.error(ex.getMessage());
             throw new InfraestructureException(ex);
         }
 
@@ -132,9 +131,7 @@ public class FotoController {
             return foto;
 
         } catch (IOException e) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE,
-                    e.getMessage(),
-                    e.getSuppressed());
+            LoggerUtil.error(e.getMessage());
             throw new InfraestructureException(e);
         }
     }

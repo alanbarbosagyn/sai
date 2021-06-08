@@ -2,7 +2,6 @@ package br.com.abce.sai.controller;
 
 import br.com.abce.sai.exception.DataValidationException;
 import br.com.abce.sai.exception.RecursoNotFoundException;
-import br.com.abce.sai.exception.ResourcedMismatchException;
 import br.com.abce.sai.persistence.model.PerfilImovel;
 import br.com.abce.sai.persistence.repo.PerfilImovelRepository;
 import br.com.abce.sai.representacao.PerfilImovelAssembler;
@@ -80,9 +79,9 @@ public class PerfilImovelController {
     @PutMapping("/{id}")
     public ResponseEntity<EntityModel<PerfilImovel>> updateImovel(@RequestBody PerfilImovel newPerfilImovel, @PathVariable Long id) {
 
-        if (newPerfilImovel.getIdPerfilImovel() != null && newPerfilImovel.getIdPerfilImovel().equals(id)) {
-            throw new ResourcedMismatchException(id);
-        }
+//        if (newPerfilImovel.getIdPerfilImovel() != null && newPerfilImovel.getIdPerfilImovel().equals(id)) {
+//            throw new ResourcedMismatchException(id);
+//        }
 
         validaDescricaoPerfilCadastrado(newPerfilImovel);
 
