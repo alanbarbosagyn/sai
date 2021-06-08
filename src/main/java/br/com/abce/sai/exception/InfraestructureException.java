@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public class InfraestructureException extends RuntimeException {
 
-    public InfraestructureException(IOException e) {
+    public InfraestructureException(Exception e) {
         super("Falha na aplicação, por favor, acione o suporte técnico.");
     }
 }
