@@ -24,7 +24,6 @@ public class ImovelModelAssembler implements RepresentationModelAssembler<Imovel
     @Override
     public EntityModel<ImovelDto> toModel(Imovel entity) {
         return EntityModel.of(modelMapper.map(entity, ImovelDto.class),
-                linkTo(methodOn(ImovelController.class).findByOne(entity.getIdImovel())).withSelfRel(),
-                linkTo(methodOn(ImovelController.class).findAll(null)).withRel("imoveis"));
+                linkTo(methodOn(ImovelController.class).findByOne(entity.getIdImovel())).withSelfRel());
     }
 }

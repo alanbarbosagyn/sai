@@ -3,6 +3,7 @@ package br.com.abce.sai.controller;
 import br.com.abce.sai.dto.ImovelDto;
 import br.com.abce.sai.exception.DataValidationException;
 import br.com.abce.sai.exception.RecursoNotFoundException;
+import br.com.abce.sai.persistence.ImovelSpecificationBuilder;
 import br.com.abce.sai.persistence.model.*;
 import br.com.abce.sai.persistence.repo.ConstrutorRepository;
 import br.com.abce.sai.persistence.repo.FotoRepository;
@@ -10,27 +11,34 @@ import br.com.abce.sai.persistence.repo.ImovelFotoRepository;
 import br.com.abce.sai.persistence.repo.ImovelRepository;
 import br.com.abce.sai.representacao.ImovelModelAssembler;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.IanaLinkRelations;
-import org.springframework.hateoas.PagedModel;
+import org.springframework.hateoas.*;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
+import javax.persistence.criteria.Predicate;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -64,19 +72,40 @@ public class ImovelController {
 
 	@ApiOperation(value = "Lista os imóvel.")
 	@GetMapping
-	public CollectionModel<Imovel> findAll(@PageableDefault(page = 0, size = 2)
-													@SortDefault.SortDefaults({
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "page", dataType = "integer", paramType = "query",
+					value = "Pagina a ser carregada", defaultValue = "0"),
+			@ApiImplicitParam(name = "size", dataType = "integer", paramType = "query",
+					value = "Quantidade de registros", defaultValue = "5"),
+			@ApiImplicitParam(name = "sort", allowMultiple = true, dataType = "string", paramType = "query",
+					value = "Ordenacao dos registros")
+	})
+	public PagedModel<EntityModel<ImovelDto>> findAll(@SortDefault.SortDefaults({
 															@SortDefault(sort = "dataCadastro", direction = Sort.Direction.DESC),
 															@SortDefault(sort = "descricao", direction = Sort.Direction.ASC)
-													}) Pageable pageable) {
+													}) @ApiIgnore Pageable pageable,
+														   @RequestParam(value = "search", required = false) String search) {
 
-		Page<Imovel> imovels = imovelRepository.findAll(pageable);
+		ImovelSpecificationBuilder builder = new ImovelSpecificationBuilder();
+		Pattern pattern = Pattern.compile("(')?(\\w+?)(:|<|>)(\\w+?),");
+		Matcher matcher = pattern.matcher(search + ",");
+		while (matcher.find()) {
+			builder.with(matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4));
+		}
 
-//		List<EntityModel<ImovelDto>> imovelsEntity = (imovels).stream()
-//				.map(assembler::toModel)
-//				.collect(Collectors.toList());
+		Specification<Imovel> spec = builder.build();
 
-		return PagedModel.of(imovels);
+		Page<Imovel> imovels = imovelRepository.findAll(spec, pageable);
+
+
+		List<EntityModel<ImovelDto>> imovelsEntity = (imovels).stream()
+				.map(assembler::toModel)
+				.collect(Collectors.toList());
+
+		PagedModel.PageMetadata metadata = new PagedModel.PageMetadata(imovels.getSize(), imovels.getNumber(), imovels.getTotalElements(), imovels.getTotalPages());
+
+		return PagedModel.of(imovelsEntity, metadata,
+				linkTo(methodOn(ImovelController.class).findAll(pageable, search)).withRel("imoveis"));
 	}
 	
 	@ApiOperation(value = "Consulta imóvel por ID.")
