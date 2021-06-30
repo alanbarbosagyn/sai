@@ -5,10 +5,7 @@ import br.com.abce.sai.exception.DataValidationException;
 import br.com.abce.sai.exception.RecursoNotFoundException;
 import br.com.abce.sai.persistence.ImovelSpecificationBuilder;
 import br.com.abce.sai.persistence.model.*;
-import br.com.abce.sai.persistence.repo.ConstrutorRepository;
-import br.com.abce.sai.persistence.repo.FotoRepository;
-import br.com.abce.sai.persistence.repo.ImovelFotoRepository;
-import br.com.abce.sai.persistence.repo.ImovelRepository;
+import br.com.abce.sai.persistence.repo.*;
 import br.com.abce.sai.representacao.ImovelModelAssembler;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -19,8 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.querydsl.binding.QuerydslPredicate;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.hateoas.*;
 import org.springframework.http.HttpEntity;
@@ -29,13 +24,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.persistence.criteria.Predicate;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -59,14 +50,17 @@ public class ImovelController {
 
 	private final ImovelFotoRepository imovelFotoRepository;
 
+	private final EnderecoRepository enderecoRepository;
+
 	private FotoRepository fotoRepository;
 
-	public ImovelController(ImovelRepository imovelRepository, ImovelModelAssembler assembler, ModelMapper modelMapper, ConstrutorRepository construtorRepository, ImovelFotoRepository imovelFotoRepository, br.com.abce.sai.persistence.repo.FotoRepository fotoRepository) {
+	public ImovelController(ImovelRepository imovelRepository, ImovelModelAssembler assembler, ModelMapper modelMapper, ConstrutorRepository construtorRepository, ImovelFotoRepository imovelFotoRepository, EnderecoRepository enderecoRepository, FotoRepository fotoRepository) {
 		this.imovelRepository = imovelRepository;
 		this.assembler = assembler;
 		this.modelMapper = modelMapper;
 		this.construtorRepository = construtorRepository;
 		this.imovelFotoRepository = imovelFotoRepository;
+		this.enderecoRepository = enderecoRepository;
 		this.fotoRepository = fotoRepository;
 	}
 
@@ -236,6 +230,25 @@ public class ImovelController {
 		Construtor construtor = construtorRepository.findById(imovelDto.getConstrutor().getId())
 				.orElseThrow(() -> new DataValidationException("Construtor não cadastrado."));
 		imovel.setConstrutorByConstrutorIdConstrutor(construtor);
+
+		Endereco enderecoIdEndereco = imovelDto.getEnderecoByEnderecoIdEndereco();
+
+		if (enderecoIdEndereco != null) {
+
+			Optional<Endereco> endereco = enderecoRepository.findById(enderecoIdEndereco.getIdEndereco());
+
+			Endereco enderecoBase = endereco.isPresent() ? new Endereco() : endereco.get();
+
+			enderecoBase.setUf(enderecoIdEndereco.getUf());
+			enderecoBase.setNumero(enderecoIdEndereco.getNumero());
+			enderecoBase.setLogradouro(enderecoIdEndereco.getLogradouro());
+			enderecoBase.setComplemento(enderecoIdEndereco.getComplemento());
+			enderecoBase.setCidade(enderecoIdEndereco.getCidade());
+			enderecoBase.setCep(enderecoIdEndereco.getCep());
+			enderecoBase.setBairro(enderecoIdEndereco.getBairro());
+
+			imovel.setEnderecoByEnderecoIdEndereco(enderecoBase);
+		}
 
 		if (imovelDto.getListaConveniencia() != null && !imovelDto.getListaConveniencia().isEmpty()) {
 			Collection<ConvenienciaHasImovel> convenienciaHasImovels = new ArrayList<>();

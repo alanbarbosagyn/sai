@@ -34,9 +34,10 @@ public class ImovelModelAssembler implements RepresentationModelAssembler<Imovel
 
         builderFotos.add(linkTo(methodOn(ImovelController.class).findByOne(entity.getIdImovel())).withSelfRel());
 
-        for (ImovelHasFoto imovelHasFoto : entity.getImovelHasFotosByIdImovel()) {
-            builderFotos.add(linkTo(methodOn(FotoController.class).findByOne(imovelHasFoto.getId().getFotoIdFoto(), null, null)).withRel("fotos"));
-        }
+        if (entity.getImovelHasFotosByIdImovel() != null)
+            for (ImovelHasFoto imovelHasFoto : entity.getImovelHasFotosByIdImovel()) {
+                builderFotos.add(linkTo(methodOn(FotoController.class).findByOne(imovelHasFoto.getId().getFotoIdFoto(), null, null)).withRel("fotos"));
+            }
 
         return EntityModel.of(modelMapper.map(entity, ImovelDto.class),
                 builderFotos);
