@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.URL;
 
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -69,6 +70,10 @@ public class Imovel {
 	@DecimalMin(value = "-90.0", message = "A latitude não pode ser menor que -90,0.")
 	@Column(name = "localizacao_longitude", nullable = true, precision = 2, scale = 7)
 	private Double localizacaoLongitude;
+
+	@URL(message = "Url inválida.")
+	@Column(name = "url_video", length = 100)
+	private String urlVideo;
 
 //	@Column(name = "construtor_id_construtor", nullable = false)
 //	private int construtorIdConstrutor;

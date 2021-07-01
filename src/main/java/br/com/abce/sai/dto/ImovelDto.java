@@ -4,7 +4,9 @@ import br.com.abce.sai.persistence.model.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.URL;
 
+import javax.persistence.Column;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.validation.Valid;
@@ -59,6 +61,9 @@ public class ImovelDto {
     @NotNull(message = "O perfil do imóvel é obrigatório.")
     @Valid
 	private PerfilImovel perfilImovelByPerfilImovelIdPerfilImovel;
+
+    @URL(message = "Url inválida.")
+    private String urlVideo;
 
     @Valid
     private Collection<Conveniencia> listaConveniencia;
