@@ -64,7 +64,7 @@ public class UsuarioController {
         validaCadastroUsuario(usuario);
         validaSenhaUsuario(usuario);
 
-        if (usuario.getFotoByFotoIdFoto() != null)
+        if (usuario.getFotoByFotoIdFoto() != null && usuario.getFotoByFotoIdFoto().getIdFoto() > 0 )
             fotoRepository.findById(usuario.getFotoByFotoIdFoto().getIdFoto())
                     .ifPresent(foto -> usuario.setFotoByFotoIdFoto(foto));
 
