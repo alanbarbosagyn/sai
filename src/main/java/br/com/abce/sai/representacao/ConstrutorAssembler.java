@@ -1,6 +1,7 @@
 package br.com.abce.sai.representacao;
 
 import br.com.abce.sai.controller.ConstrutorController;
+import br.com.abce.sai.controller.UsuarioController;
 import br.com.abce.sai.dto.ConstrutorDto;
 import br.com.abce.sai.persistence.model.Construtor;
 import org.modelmapper.ModelMapper;
@@ -20,8 +21,11 @@ public class ConstrutorAssembler implements RepresentationModelAssembler<Constru
 
     @Override
     public EntityModel<ConstrutorDto> toModel(Construtor entity) {
-        return EntityModel.of(modelMapper.map(entity, ConstrutorDto.class),
+        ConstrutorDto construtorDto = modelMapper.map(entity, ConstrutorDto.class);
+        return EntityModel.of(construtorDto,
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ConstrutorController.class).findByOne(entity.getIdConstrutor())).withSelfRel(),
-                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ConstrutorController.class).findAll(entity.getCnpj())).withRel("construtores"));
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ConstrutorController.class).findAll(entity.getCnpj())).withRel("construtores"),
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UsuarioController.class)
+                        .findByOne((construtorDto.getUsuarioId()))).withRel("usuario"));
     }
 }
