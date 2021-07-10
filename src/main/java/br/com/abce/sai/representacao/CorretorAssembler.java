@@ -24,7 +24,7 @@ public class CorretorAssembler implements RepresentationModelAssembler<Corretor,
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CorretorController.class)
                         .findByOne(entity.getIdCorretor())).withSelfRel(),
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CorretorController.class)
-                        .findAll(entity.getCpf(), entity.getNumCreci())).withRel("corretores"),
+                        .findAll(entity.getCpf(), entity.getNumCreci(), entity.getUsuarioId())).withRel("corretores"),
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UsuarioController.class)
                         .findByOne((entity.getUsuarioId()))).withRel("usuario"));
     }

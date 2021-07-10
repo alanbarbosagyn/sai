@@ -52,13 +52,14 @@ public class ConstrutorController {
 
     @ApiOperation(value = "Consulta todos os construtores de imóveis.")
     @GetMapping
-    public CollectionModel<EntityModel<ConstrutorDto>> findAll(@RequestParam(name = "cnpj", required = false) @ApiParam(name = "CNPJ do construtor(a)") @CNPJ(message = "O CNPJ é inválido.") final String cnpj) {
+    public CollectionModel<EntityModel<ConstrutorDto>> findAll(@RequestParam(name = "cnpj", required = false) @ApiParam(name = "CNPJ do construtor(a)") @CNPJ(message = "O CNPJ é inválido.") final String cnpj,
+                                                               @RequestParam(name = "usuario-id", required = false) final Long usuarioId) {
 
         CollectionModel collectionModel = null;
 
-        if (cnpj != null) {
+        if (cnpj != null || (usuarioId != null && usuarioId > 0L)) {
 
-            collectionModel = (CollectionModel) CollectionModel.of(construtorRepository.findByCnpj(cnpj)
+            collectionModel = (CollectionModel) CollectionModel.of(construtorRepository.findByCnpjorUAndUsuarioByUsuarioIdUsuario_IdUsuario(cnpj, usuarioId)
                     .orElseThrow(() -> new RecursoNotFoundException(Construtor.class, cnpj)));
         } else {
 

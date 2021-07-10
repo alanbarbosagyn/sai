@@ -51,14 +51,16 @@ public class CorretorController {
     @ApiOperation(value = "Consulta todos os corretores de imóveis.")
     @GetMapping
     public CollectionModel<EntityModel<Corretor>> findAll(@RequestParam(name = "cpf", required = false) @CPF(message = "O CPF é inválido.") final String cpf,
-                                                          @RequestParam(name = "creci", required = false) final String creci) {
+                                                          @RequestParam(name = "creci", required = false) final String creci,
+                                                          @RequestParam(name = "usuario-id", required = false) final Long usuarioId
+    ) {
 
         CollectionModel<EntityModel<Corretor>> collectionModel = null;
 
-        if (cpf != null || creci != null) {
+        if (cpf != null || creci != null || (usuarioId != null && usuarioId > 0L)) {
 
-            Corretor corretor = corretorRepository.findByNumCreciOrCpf(creci, cpf)
-                    .orElseThrow(() -> new RecursoNotFoundException(Corretor.class, cpf + creci));
+            Corretor corretor = corretorRepository.findByNumCreciOrCpfOrUsuarioByUsuarioIdUsuario_IdUsuario(creci, cpf, usuarioId)
+                    .orElseThrow(() -> new RecursoNotFoundException(Corretor.class, cpf + creci + usuarioId));
 
             collectionModel = CollectionModel.of(Stream.of(corretor).map(assembler::toModel).collect(Collectors.toList()));
 
