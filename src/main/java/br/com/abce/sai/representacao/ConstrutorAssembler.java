@@ -24,7 +24,7 @@ public class ConstrutorAssembler implements RepresentationModelAssembler<Constru
         ConstrutorDto construtorDto = modelMapper.map(entity, ConstrutorDto.class);
         return EntityModel.of(construtorDto,
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ConstrutorController.class).findByOne(entity.getIdConstrutor())).withSelfRel(),
-                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ConstrutorController.class).findAll(entity.getCnpj())).withRel("construtores"),
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ConstrutorController.class).findAll(entity.getCnpj(), entity.getUsuarioByUsuarioIdUsuario().getIdUsuario())).withRel("construtores"),
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UsuarioController.class)
                         .findByOne((construtorDto.getUsuarioId()))).withRel("usuario"));
     }
