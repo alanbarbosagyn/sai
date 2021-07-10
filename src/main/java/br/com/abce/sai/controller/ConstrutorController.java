@@ -59,7 +59,7 @@ public class ConstrutorController {
 
         if (cnpj != null || (usuarioId != null && usuarioId > 0L)) {
 
-            collectionModel = (CollectionModel) CollectionModel.of(construtorRepository.findByCnpjorUAndUsuarioByUsuarioIdUsuario_IdUsuario(cnpj, usuarioId)
+            collectionModel = (CollectionModel) CollectionModel.of(construtorRepository.findByCnpjOrusuarioByUsuarioIdUsuario_IdUsuario(cnpj, usuarioId)
                     .orElseThrow(() -> new RecursoNotFoundException(Construtor.class, cnpj)));
         } else {
 
