@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface ConstrutorRepository extends CrudRepository<Construtor, Long> {
 
-    Optional<Construtor> findByCnpj(final String cnpj);
+    Optional<Construtor> findByCnpjOrUsuarioByUsuarioIdUsuario_IdUsuario(final String cnpj, final Long usuarioId);
 
     boolean existsByCnpj(final String cnpj);
 

@@ -67,4 +67,7 @@ public class Corretor {
 
     @OneToMany(mappedBy = "corretorByCorretorId")
     private Collection<CorretorImovelFavorito> imovelHasFavorito;
+
+    @Transient
+    private Long usuarioId;
 }

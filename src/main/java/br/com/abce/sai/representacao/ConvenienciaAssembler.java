@@ -1,6 +1,6 @@
 package br.com.abce.sai.representacao;
 
-import br.com.abce.sai.controller.ConstrutorController;
+import br.com.abce.sai.controller.ConvenienciaController;
 import br.com.abce.sai.persistence.model.Conveniencia;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -13,7 +13,7 @@ public class ConvenienciaAssembler implements RepresentationModelAssembler<Conve
     @Override
     public EntityModel<Conveniencia> toModel(Conveniencia entity) {
         return EntityModel.of(entity,
-                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ConstrutorController.class).findByOne(entity.getIdConveniencia())).withSelfRel(),
-                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ConstrutorController.class).findAll(entity.getDescricao())).withRel("conveniencias-imovel"));
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ConvenienciaController.class).findByOne(entity.getIdConveniencia())).withSelfRel(),
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ConvenienciaController.class).findAll(entity.getDescricao())).withRel("conveniencias-imovel"));
     }
 }

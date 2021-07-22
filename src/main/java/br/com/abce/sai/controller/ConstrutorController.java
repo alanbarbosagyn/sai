@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/api/construtor")
@@ -52,14 +53,17 @@ public class ConstrutorController {
 
     @ApiOperation(value = "Consulta todos os construtores de imóveis.")
     @GetMapping
-    public CollectionModel<EntityModel<ConstrutorDto>> findAll(@RequestParam(name = "cnpj", required = false) @ApiParam(name = "CNPJ do construtor(a)") @CNPJ(message = "O CNPJ é inválido.") final String cnpj) {
+    public CollectionModel<EntityModel<ConstrutorDto>> findAll(@RequestParam(name = "cnpj", required = false) @ApiParam(name = "CNPJ do construtor(a)") @CNPJ(message = "O CNPJ é inválido.") final String cnpj,
+                                                               @RequestParam(name = "usuario-id", required = false) final Long usuarioId) {
 
-        CollectionModel collectionModel = null;
+        CollectionModel collectionModel;
 
-        if (cnpj != null) {
+        if (cnpj != null || (usuarioId != null && usuarioId > 0L)) {
 
-            collectionModel = (CollectionModel) CollectionModel.of(construtorRepository.findByCnpj(cnpj)
-                    .orElseThrow(() -> new RecursoNotFoundException(Construtor.class, cnpj)));
+            Construtor contrConstrutor = construtorRepository.findByCnpjOrUsuarioByUsuarioIdUsuario_IdUsuario(cnpj, usuarioId)
+                    .orElseThrow(() -> new RecursoNotFoundException(Construtor.class, cnpj));
+
+            collectionModel = CollectionModel.of(Stream.of(contrConstrutor).map(assembler::toModel).collect(Collectors.toList()));
         } else {
 
             collectionModel = CollectionModel.of(((List<Construtor>) construtorRepository.findAll())

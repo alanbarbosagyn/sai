@@ -9,12 +9,15 @@ import org.springframework.stereotype.Component;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @Component
 public class UsuarioAssembler implements RepresentationModelAssembler<Usuario, EntityModel<Usuario>> {
 
     @Override
     public EntityModel<Usuario> toModel(Usuario entity) {
+
         Long idFoto = entity.getFotoByFotoIdFoto() != null ? entity.getFotoByFotoIdFoto().getIdFoto() : 98L;
+
         return EntityModel.of(entity,
                 linkTo(methodOn(UsuarioController.class).findByOne(entity.getIdUsuario())).withSelfRel(),
                 linkTo(methodOn(UsuarioController.class).findAll()).withRel("usuarios"),

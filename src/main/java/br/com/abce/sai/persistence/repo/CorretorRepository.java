@@ -11,5 +11,5 @@ public interface CorretorRepository extends CrudRepository<Corretor, Long> {
 
     Optional<Corretor> findByCpfEquals(final String cpf);
 
-    Optional<Corretor> findByNumCreciOrCpf(final String numCreci, final String cpf);
+    Optional<Corretor> findByNumCreciOrCpfOrUsuarioByUsuarioIdUsuario_IdUsuario(final String numCreci, final String cpf, final Long usuarioId);
 }
