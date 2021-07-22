@@ -1,23 +1,23 @@
 package br.com.abce.sai.controller;
 
 import br.com.abce.sai.dto.ImovelDto;
+import br.com.abce.sai.dto.PesquisaImovelDto;
 import br.com.abce.sai.exception.DataValidationException;
 import br.com.abce.sai.exception.RecursoNotFoundException;
-import br.com.abce.sai.persistence.ImovelSpecificationBuilder;
+import br.com.abce.sai.persistence.ImovelSpecification;
 import br.com.abce.sai.persistence.model.*;
 import br.com.abce.sai.persistence.repo.*;
 import br.com.abce.sai.representacao.ImovelModelAssembler;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.SortDefault;
-import org.springframework.hateoas.*;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +27,6 @@ import springfox.documentation.annotations.ApiIgnore;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -78,19 +76,11 @@ public class ImovelController {
 															@SortDefault(sort = "dataCadastro", direction = Sort.Direction.DESC),
 															@SortDefault(sort = "descricao", direction = Sort.Direction.ASC)
 													}) @ApiIgnore Pageable pageable,
-														   @RequestParam(value = "search", required = false) String search) {
+														   @ApiParam(name = "pesquisaImovelDto") PesquisaImovelDto pesquisaImovelDto) {
 
-		ImovelSpecificationBuilder builder = new ImovelSpecificationBuilder();
-		Pattern pattern = Pattern.compile("(')?(\\w+?)(:|<|>)(\\w+?),");
-		Matcher matcher = pattern.matcher(search + ",");
-		while (matcher.find()) {
-			builder.with(matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4));
-		}
+		Specification<Imovel> specification = new ImovelSpecification(pesquisaImovelDto);
 
-		Specification<Imovel> spec = builder.build();
-
-		Page<Imovel> imovels = imovelRepository.findAll(spec, pageable);
-
+		Page<Imovel> imovels = imovelRepository.findAll(specification, pageable);
 
 		List<EntityModel<ImovelDto>> imovelsEntity = (imovels).stream()
 				.map(assembler::toModel)
@@ -99,9 +89,9 @@ public class ImovelController {
 		PagedModel.PageMetadata metadata = new PagedModel.PageMetadata(imovels.getSize(), imovels.getNumber(), imovels.getTotalElements(), imovels.getTotalPages());
 
 		return PagedModel.of(imovelsEntity, metadata,
-				linkTo(methodOn(ImovelController.class).findAll(pageable, search)).withRel("imoveis"));
+				linkTo(methodOn(ImovelController.class).findAll(pageable, pesquisaImovelDto)).withRel("imoveis"));
 	}
-	
+
 	@ApiOperation(value = "Consulta imóvel por ID.")
 	@GetMapping("{id}")
 	public EntityModel<ImovelDto> findByOne(@PathVariable @NotNull(message = "Id do imóvel obrigatório.") Long id) {

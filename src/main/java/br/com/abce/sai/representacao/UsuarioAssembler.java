@@ -1,5 +1,6 @@
 package br.com.abce.sai.representacao;
 
+import br.com.abce.sai.controller.FotoController;
 import br.com.abce.sai.controller.UsuarioController;
 import br.com.abce.sai.persistence.model.Usuario;
 import org.springframework.hateoas.EntityModel;
@@ -13,8 +14,10 @@ public class UsuarioAssembler implements RepresentationModelAssembler<Usuario, E
 
     @Override
     public EntityModel<Usuario> toModel(Usuario entity) {
+        Long idFoto = entity.getFotoByFotoIdFoto() != null ? entity.getFotoByFotoIdFoto().getIdFoto() : 98L;
         return EntityModel.of(entity,
                 linkTo(methodOn(UsuarioController.class).findByOne(entity.getIdUsuario())).withSelfRel(),
-                linkTo(methodOn(UsuarioController.class).findAll()).withRel("usuarios"));
+                linkTo(methodOn(UsuarioController.class).findAll()).withRel("usuarios"),
+                linkTo(methodOn(FotoController.class).findByOne(idFoto, 50,50)).withRel("foto"));
     }
 }
