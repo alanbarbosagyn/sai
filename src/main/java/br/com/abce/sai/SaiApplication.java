@@ -41,15 +41,15 @@ public class SaiApplication extends SpringBootServletInitializer {
 		return new BCryptPasswordEncoder();
 	}
 
-	@Bean
-	public DataSource getDataSource() {
-		DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
-		dataSourceBuilder.driverClassName("com.mysql.cj.jdbc.Driver");
-		dataSourceBuilder.url("jdbc:mysql://localhost:3306/sai?useTimezone=true&serverTimezone=UTC");
-		dataSourceBuilder.username("sai");
-		dataSourceBuilder.password("sai@2021");
-		return dataSourceBuilder.build();
-	}
+//	@Bean
+//	public DataSource getDataSource() {
+//		DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
+//		dataSourceBuilder.driverClassName("com.mysql.cj.jdbc.Driver");
+//		dataSourceBuilder.url("jdbc:mysql://localhost:3306/sai?useTimezone=true&serverTimezone=UTC");
+//		dataSourceBuilder.username("sai");
+//		dataSourceBuilder.password("sai@2021");
+//		return dataSourceBuilder.build();
+//	}
 
 //	@Bean
 //	public DataSource dataSource() throws NamingException {
