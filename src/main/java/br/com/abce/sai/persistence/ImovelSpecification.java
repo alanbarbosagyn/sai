@@ -20,6 +20,8 @@ public class ImovelSpecification implements Specification<Imovel> {
 
         List<Predicate> list = new ArrayList<>();
 
+        query.distinct(true);
+
         Join<Endereco, Imovel> enderecoImovelJoin = root.join("enderecoByEnderecoIdEndereco", JoinType.INNER);
         if (StringUtils.isNotBlank(pesquisaImovelDto.getBairro())) {
             list.add(cb.like(enderecoImovelJoin.get("bairro").as(String.class), "%"+pesquisaImovelDto.getBairro() +"%"));
