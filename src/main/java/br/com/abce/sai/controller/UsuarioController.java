@@ -8,7 +8,7 @@ import br.com.abce.sai.persistence.repo.FotoRepository;
 import br.com.abce.sai.persistence.repo.UsuarioRepository;
 import br.com.abce.sai.representacao.UsuarioAssembler;
 import br.com.abce.sai.service.MailService;
-import com.nimbusds.oauth2.sdk.util.StringUtils;
+import io.micrometer.core.instrument.util.StringUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
