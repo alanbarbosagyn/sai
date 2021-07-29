@@ -1,14 +1,15 @@
 package br.com.abce.sai.persistence.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -27,6 +28,11 @@ public class Usuario {
     @Column(name = "login", nullable = false, length = 45)
     private String login;
 
+    @Email(message = "E-mail inválido.")
+    @NotNull(message = "E-mail do usuário é obrigatório")
+    @Column(name = "email", nullable = false, length = 60)
+    private String email;
+
     @Transient
     @Size(message = "A senha deve conter no mínimo 6 e no máximo 10 caracteres", min = 6, max = 10)
     private String senhaLimpa;
@@ -34,7 +40,6 @@ public class Usuario {
     @Transient
     private String senhaLimpaConfirmacao;
 
-    @JsonIgnore
     @Column(name = "senha", nullable = false, length = 100)
     private String senha;
 
@@ -44,4 +49,25 @@ public class Usuario {
     @OneToOne
     @JoinColumn(name = "foto_id_foto", referencedColumnName = "id_foto")
     private Foto fotoByFotoIdFoto;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "auth_provider")
+    private AuthProvider authProvider;
+
+    @Column(name = "tipo", length = 1, nullable = false)
+    private String tipo;
+
+    @Column(name = "recuperacao_senha", length = 1, nullable = false)
+    private String reperacaoSenha;
+
+    @Column(name = "confirmacao_email", length = 1, nullable = false)
+    private String confirmacaoEmail;
+
+    @Column(name = "data_cadastro", nullable = false)
+    private Date dataCadastro;
+
+    @Column(name = "data_atualizacao")
+    private Date dataAtualizacao;
+
+
 }

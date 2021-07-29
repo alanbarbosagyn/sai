@@ -10,6 +10,8 @@ public interface ImovelFotoRepository extends CrudRepository<ImovelHasFoto, Long
 
     Collection<ImovelHasFoto> findImovelHasFotosById_ImovelIdImovel(final Long idImovel);
 
+    Optional<ImovelHasFoto> findImovelHasFotosById_ImovelIdImovelAndId_FotoIdFoto(final Long idImovel, final Long idFoto);
+
     Collection<ImovelHasFoto> findImovelHasFotosById_ImovelIdImovelAndCapa(final Long idImovel, boolean isCapa);
 
     Optional<ImovelHasFoto> findTopByOrdem(final Long idImovel);

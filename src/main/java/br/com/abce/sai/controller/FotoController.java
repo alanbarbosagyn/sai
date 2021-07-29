@@ -86,12 +86,13 @@ public class FotoController {
                 .body(fotoModel);
     }
 
-    @ApiOperation(value = "Deleta foto do imóvel.")
+    @ApiOperation(value = "Deleta foto.")
     @DeleteMapping("/{id}")
     public HttpEntity<Object> delete(@PathVariable @NotNull(message = "Id da foto é obrigatório.") Long id) {
 
         fotoRepository.findById(id)
                 .orElseThrow(() -> new RecursoNotFoundException(Foto.class, id));
+
         fotoRepository.deleteById(id);
 
         return ResponseEntity.noContent().build();

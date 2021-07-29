@@ -189,6 +189,19 @@ public class ImovelController {
 				.body(imovelEntityModel);
 	}
 
+	@ApiOperation(value = "Deleta foto do imóvel.")
+	@DeleteMapping("{id-imovel}/foto/{id-foto}")
+	public HttpEntity<Object> delete(@PathVariable(name = "id-imovel") @NotNull(message = "Id do imóvel é obrigatório.") Long idImovel,
+									 @PathVariable(name = "id-foto") @NotNull(message = "Id da foto é obrigatório.") Long idFoto) {
+
+		ImovelHasFoto fotoImovelDelete = imovelFotoRepository.findImovelHasFotosById_ImovelIdImovelAndId_FotoIdFoto(idImovel, idFoto)
+				.orElseThrow(() -> new RecursoNotFoundException(ImovelHasFoto.class, 0L));
+
+		imovelFotoRepository.delete(fotoImovelDelete);
+
+		return ResponseEntity.noContent().build();
+	}
+
 	@ApiOperation(value = "Lista as fotos de um imóvel.")
 	@GetMapping("{id-imovel}/foto")
 	public Collection<EntityModel<ImovelHasFoto>> findAllFoto(@PathVariable(name = "id-imovel") @NotNull(message = "Id do imóvel obrigatório") Long idImovel) {

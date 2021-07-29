@@ -4,6 +4,7 @@ import br.com.abce.sai.exception.DataValidationException;
 import br.com.abce.sai.exception.RecursoNotFoundException;
 import br.com.abce.sai.persistence.model.Corretor;
 import br.com.abce.sai.persistence.model.Endereco;
+import br.com.abce.sai.persistence.model.Usuario;
 import br.com.abce.sai.persistence.repo.CorretorRepository;
 import br.com.abce.sai.persistence.repo.EnderecoRepository;
 import br.com.abce.sai.persistence.repo.UsuarioRepository;
@@ -23,6 +24,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -41,11 +43,14 @@ public class CorretorController {
 
     private final CorretorAssembler assembler;
 
-    public CorretorController(CorretorRepository corretorRepository, UsuarioRepository usuarioRepository, EnderecoRepository enderecoRepository, CorretorAssembler assembler) {
+    private final UsuarioController usuarioController;
+
+    public CorretorController(CorretorRepository corretorRepository, UsuarioRepository usuarioRepository, EnderecoRepository enderecoRepository, CorretorAssembler assembler, UsuarioController usuarioController) {
         this.corretorRepository = corretorRepository;
         this.usuarioRepository = usuarioRepository;
         this.enderecoRepository = enderecoRepository;
         this.assembler = assembler;
+        this.usuarioController = usuarioController;
     }
 
     @ApiOperation(value = "Consulta todos os corretores de imóveis.")
@@ -88,6 +93,11 @@ public class CorretorController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<EntityModel<Corretor>> create(@Valid @RequestBody Corretor corretor) {
+
+        if (corretor.getUsuarioByUsuarioIdUsuario() != null) {
+            ResponseEntity<EntityModel<Usuario>> usuario = usuarioController.create(corretor.getUsuarioByUsuarioIdUsuario());
+            corretor.setUsuarioByUsuarioIdUsuario(Objects.requireNonNull(usuario.getBody()).getContent());
+        }
 
         validaCorretorCadastrado(corretor);
 

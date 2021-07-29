@@ -92,11 +92,12 @@ public class ConstrutorController {
 
         validaConstrutorCadastrado(construtor);
 
-        Optional<Usuario> usuario = usuarioRepository.findByIdUsuario(construtor.getUsuarioId());
-
         Construtor entity = modelMapper.map(construtor, Construtor.class);
 
-        entity.setUsuarioByUsuarioIdUsuario(usuario.orElseThrow(() -> new DataValidationException("Usuário não cadastrado.")));
+        if (construtor.getUsuarioId() != null) {
+            usuarioRepository.findByIdUsuario(construtor.getUsuarioId()).ifPresent(entity::setUsuarioByUsuarioIdUsuario);
+        }
+
         entity.setDataCadastro(new Date());
 
         EntityModel<ConstrutorDto> ConstrutorEntityModel = assembler.toModel(construtorRepository.save(entity));
@@ -117,9 +118,10 @@ public class ConstrutorController {
                 .map(construtor -> {
                     construtor.setCnpj(newConstrutor.getCnpj());
                     construtor.setNome(newConstrutor.getNome());
-                    construtor.setUsuarioByUsuarioIdUsuario(usuarioRepository
-                            .findByIdUsuario(newConstrutor.getUsuarioId())
-                            .orElseThrow(() -> new DataValidationException("Usuário não cadastrado.")));
+
+                    if (newConstrutor.getUsuarioId() != null) {
+                        usuarioRepository.findByIdUsuario(newConstrutor.getUsuarioId()).ifPresent(construtor::setUsuarioByUsuarioIdUsuario);
+                    }
 
                     return construtorRepository.save(construtor);
                 })

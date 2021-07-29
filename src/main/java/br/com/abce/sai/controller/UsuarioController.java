@@ -2,12 +2,16 @@ package br.com.abce.sai.controller;
 
 import br.com.abce.sai.exception.DataValidationException;
 import br.com.abce.sai.exception.RecursoNotFoundException;
+import br.com.abce.sai.persistence.model.Const;
 import br.com.abce.sai.persistence.model.Usuario;
 import br.com.abce.sai.persistence.repo.FotoRepository;
 import br.com.abce.sai.persistence.repo.UsuarioRepository;
 import br.com.abce.sai.representacao.UsuarioAssembler;
+import br.com.abce.sai.service.MailService;
+import com.nimbusds.oauth2.sdk.util.StringUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -18,9 +22,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/api/usuario")
@@ -36,24 +43,39 @@ public class UsuarioController {
 
     private final PasswordEncoder passwordEncoder;
 
+    private MailService mailService;
 
-    public UsuarioController(UsuarioRepository tipoImoveRepository, UsuarioAssembler assembler, FotoRepository fotoRepository, PasswordEncoder passwordEncoder) {
+
+    public UsuarioController(UsuarioRepository tipoImoveRepository, UsuarioAssembler assembler, FotoRepository fotoRepository, PasswordEncoder passwordEncoder, MailService mailService) {
         this.usuarioRepository = tipoImoveRepository;
         this.assembler = assembler;
         this.fotoRepository = fotoRepository;
         this.passwordEncoder = passwordEncoder;
+        this.mailService = mailService;
     }
 
     @ApiOperation(value = "Consulta todos os usuarios.")
     @GetMapping
-    public CollectionModel<EntityModel<Usuario>> findAll() {
+    public CollectionModel<EntityModel<Usuario>> findAll(@RequestParam(name = "login", required = false) @ApiParam(name = "Login do usuário")  final String login,
+                                                        @Email @RequestParam(name = "email", required = false) @ApiParam(name = "E-mail do usuário")  final String email) {
 
-        List<EntityModel<Usuario>> usuarios = ((List<Usuario>) usuarioRepository.findAll())
-                .stream()
-                .map(assembler::toModel)
-                .collect(Collectors.toList());
+        CollectionModel collectionModel;
 
-        return CollectionModel.of(usuarios);
+        if (StringUtils.isNotBlank(login) || StringUtils.isNotBlank(email)) {
+
+            Usuario usuario = usuarioRepository.findByLoginOrEmail(login, email)
+                    .orElseThrow(() -> new RecursoNotFoundException(Usuario.class, login));
+
+            collectionModel = CollectionModel.of(Stream.of(usuario).map(assembler::toModel).collect(Collectors.toList()));
+        } else {
+
+            collectionModel = CollectionModel.of(((List<Usuario>) usuarioRepository.findAll())
+                    .stream()
+                    .map(assembler::toModel)
+                    .collect(Collectors.toList()));
+        }
+
+        return collectionModel;
     }
 
     @ApiOperation(value = "Cadastra um novo usuário.")
@@ -62,15 +84,20 @@ public class UsuarioController {
     public ResponseEntity<EntityModel<Usuario>> create(@RequestBody @Valid Usuario usuario) {
 
         validaCadastroUsuario(usuario);
-        validaSenhaUsuario(usuario);
+//        validaSenhaUsuario(usuario);
 
         if (usuario.getFotoByFotoIdFoto() != null && usuario.getFotoByFotoIdFoto().getIdFoto() > 0 )
             fotoRepository.findById(usuario.getFotoByFotoIdFoto().getIdFoto())
                     .ifPresent(foto -> usuario.setFotoByFotoIdFoto(foto));
 
-        usuario.setSenha(passwordEncoder.encode(usuario.getSenhaLimpa()));
+//        usuario.setSenha(passwordEncoder.encode(usuario.getSenhaLimpa()));
+//        usuario.setStatus(Const.USUARIO_STATUS_NAO_AUTORIZADO);
+//        usuario.setConfirmacaoEmail(Const.USUARIO_EMAIL_NAO_VERIFICADO);
+        usuario.setDataCadastro(new Date());
 
         EntityModel<Usuario> tipoImovelEntityModel = assembler.toModel(usuarioRepository.save(usuario));
+
+        mailService.send(usuario.getLogin(), Const.ASSUNTO_EMAIL_NOVO_USUARIO, Const.CORPO_EMAIL_NOVO_USUARIO);
 
         return ResponseEntity.created(tipoImovelEntityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(tipoImovelEntityModel);
@@ -84,6 +111,8 @@ public class UsuarioController {
 //            throw new ResourcedMismatchException(id);
 //        }
 
+        validaSenhaUsuario(newUsuario);
+
         Usuario tipoImovelUpdated = usuarioRepository.findById(id)
                 .map(usuario -> {
 
@@ -93,11 +122,18 @@ public class UsuarioController {
 
                     usuario.setStatus(newUsuario.getStatus());
                     usuario.setLogin(newUsuario.getLogin());
+                    usuario.setReperacaoSenha(newUsuario.getReperacaoSenha());
+                    usuario.setAuthProvider(newUsuario.getAuthProvider());
+                    usuario.setConfirmacaoEmail(newUsuario.getConfirmacaoEmail());
+                    usuario.setTipo(newUsuario.getTipo());
+                    usuario.setDataAtualizacao(new Date());
+                    usuario.setEmail(newUsuario.getEmail());
+                    usuario.setSenha(newUsuario.getSenha());
 
-                    if (newUsuario.getSenhaLimpa() != null) {
-                        validaSenhaUsuario(newUsuario);
-                        usuario.setSenha(passwordEncoder.encode(newUsuario.getSenhaLimpa()));
-                    }
+//                    if (newUsuario.getSenhaLimpa() != null) {
+//                        validaSenhaUsuario(newUsuario);
+//                        usuario.setSenha(passwordEncoder.encode(newUsuario.getSenhaLimpa()));
+//                    }
 
                     return usuarioRepository.save(usuario);
                 })
@@ -127,6 +163,9 @@ public class UsuarioController {
 
         if (usuarioRepository.existsByLogin(usuario.getLogin()))
             throw new DataValidationException("Login já cadastrado.");
+
+        if (usuarioRepository.existsByEmail(usuario.getEmail()))
+            throw new DataValidationException("E-mail já cadastrado.");
     }
     private void validaSenhaUsuario(@RequestBody @Validated Usuario usuario) {
 
