@@ -11,7 +11,7 @@ public interface UsuarioRepository extends CrudRepository<Usuario, Long> {
 
     Optional<Usuario> findByLogin(String login);
 
-    Optional<Usuario> findByLoginOrEmail(String login, String email);
+    Optional<Usuario> findByEmail(String email);
 
     Iterable<Usuario> findByStatus(String status);
 

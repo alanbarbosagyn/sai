@@ -56,15 +56,15 @@ public class UsuarioController {
 
     @ApiOperation(value = "Consulta todos os usuarios.")
     @GetMapping
-    public CollectionModel<EntityModel<Usuario>> findAll(@RequestParam(name = "login", required = false) @ApiParam(name = "Login do usuário")  final String login,
-                                                        @Email @RequestParam(name = "email", required = false) @ApiParam(name = "E-mail do usuário")  final String email) {
+    public CollectionModel<EntityModel<Usuario>> findAll(@RequestParam(name = "login", required = false) final String login,
+                                                        @RequestParam(name = "email", required = false)  @Email(message = "E-mail inválido.") final String email) {
 
         CollectionModel collectionModel;
 
         if (StringUtils.isNotBlank(login) || StringUtils.isNotBlank(email)) {
 
-            Usuario usuario = usuarioRepository.findByLoginOrEmail(login, email)
-                    .orElseThrow(() -> new RecursoNotFoundException(Usuario.class, login));
+            Usuario usuario = (StringUtils.isNotBlank(login)  ? usuarioRepository.findByLogin(login) :  usuarioRepository.findByEmail(email))
+                    .orElseThrow(() -> new RecursoNotFoundException(Usuario.class, login + email));
 
             collectionModel = CollectionModel.of(Stream.of(usuario).map(assembler::toModel).collect(Collectors.toList()));
         } else {
@@ -84,13 +84,14 @@ public class UsuarioController {
     public ResponseEntity<EntityModel<Usuario>> create(@RequestBody @Valid Usuario usuario) {
 
         validaCadastroUsuario(usuario);
-//        validaSenhaUsuario(usuario);
+        validaSenhaUsuario(usuario);
 
         if (usuario.getFotoByFotoIdFoto() != null && usuario.getFotoByFotoIdFoto().getIdFoto() > 0 )
             fotoRepository.findById(usuario.getFotoByFotoIdFoto().getIdFoto())
                     .ifPresent(foto -> usuario.setFotoByFotoIdFoto(foto));
 
-//        usuario.setSenha(passwordEncoder.encode(usuario.getSenhaLimpa()));
+        if (StringUtils.isNotBlank(usuario.getSenhaLimpa()))
+            usuario.setSenha(passwordEncoder.encode(usuario.getSenhaLimpa()));
 //        usuario.setStatus(Const.USUARIO_STATUS_NAO_AUTORIZADO);
 //        usuario.setConfirmacaoEmail(Const.USUARIO_EMAIL_NAO_VERIFICADO);
         usuario.setDataCadastro(new Date());
@@ -130,15 +131,20 @@ public class UsuarioController {
                     usuario.setEmail(newUsuario.getEmail());
                     usuario.setSenha(newUsuario.getSenha());
 
-//                    if (newUsuario.getSenhaLimpa() != null) {
-//                        validaSenhaUsuario(newUsuario);
-//                        usuario.setSenha(passwordEncoder.encode(newUsuario.getSenhaLimpa()));
-//                    }
+                    if (newUsuario.getSenhaLimpa() != null) {
+                        validaSenhaUsuario(newUsuario);
+                        usuario.setSenha(passwordEncoder.encode(newUsuario.getSenhaLimpa()));
+                    }
 
                     return usuarioRepository.save(usuario);
                 })
                 .orElseGet(() -> {
                     newUsuario.setIdUsuario(id);
+
+                    if (newUsuario.getSenhaLimpa() != null) {
+                        validaSenhaUsuario(newUsuario);
+                        newUsuario.setSenha(passwordEncoder.encode(newUsuario.getSenhaLimpa()));
+                    }
                     return usuarioRepository.save(newUsuario);
                 });
 
