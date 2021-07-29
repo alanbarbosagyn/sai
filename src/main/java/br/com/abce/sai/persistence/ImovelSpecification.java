@@ -22,11 +22,12 @@ public class ImovelSpecification implements Specification<Imovel> {
 
         query.distinct(true);
 
-        Join<Endereco, Imovel> enderecoImovelJoin = root.join("enderecoByEnderecoIdEndereco", JoinType.INNER);
         if (StringUtils.isNotBlank(pesquisaImovelDto.getBairro())) {
+            Join<Endereco, Imovel> enderecoImovelJoin = root.join("enderecoByEnderecoIdEndereco", JoinType.INNER);
             list.add(cb.like(enderecoImovelJoin.get("bairro").as(String.class), "%"+pesquisaImovelDto.getBairro() +"%"));
         }
         if (StringUtils.isNotBlank(pesquisaImovelDto.getCidade())) {
+            Join<Endereco, Imovel> enderecoImovelJoin = root.join("enderecoByEnderecoIdEndereco", JoinType.INNER);
             list.add(cb.like(enderecoImovelJoin.get("cidade").as(String.class), "%"+pesquisaImovelDto.getCidade() +"%"));
         }
 
@@ -54,28 +55,28 @@ public class ImovelSpecification implements Specification<Imovel> {
             list.add(cb.lt(root.get("valor").as(Double.class), pesquisaImovelDto.getValorMaximo()));
         }
 
-        Join<TipoImovel, Imovel> tipoImovelImovelJoin = root.join("tipoImovelByTipoImovelIdTipoImovel");
         if (pesquisaImovelDto.getIdTipo() != null) {
+            Join<TipoImovel, Imovel> tipoImovelImovelJoin = root.join("tipoImovelByTipoImovelIdTipoImovel");
             list.add(tipoImovelImovelJoin.get("idTipoImovel").as(Long.class).in(pesquisaImovelDto.getIdTipo()));
         }
 
-        Join<Construtor, Imovel> construtorImovelJoin = root.join("construtorByConstrutorIdConstrutor");
         if (pesquisaImovelDto.getIdConstrutores() != null) {
+            Join<Construtor, Imovel> construtorImovelJoin = root.join("construtorByConstrutorIdConstrutor");
             list.add(construtorImovelJoin.get("idConstrutor").as(Long.class).in(pesquisaImovelDto.getIdConstrutores()));
         }
 
-        Join<PerfilImovel, Imovel> perfilImovelImovelJoin = root.join("perfilImovelByPerfilImovelIdPerfilImovel");
         if (pesquisaImovelDto.getIdPerfil() != null) {
+            Join<PerfilImovel, Imovel> perfilImovelImovelJoin = root.join("perfilImovelByPerfilImovelIdPerfilImovel");
             list.add(perfilImovelImovelJoin.get("idPerfilImovel").as(Long.class).in(pesquisaImovelDto.getIdPerfil()));
         }
 
-        Join<ConvenienciaHasImovel, Imovel> convenienciaHasImovelImovelJoin = root.join("convenienciaHasImovelsByIdImovel");
         if (pesquisaImovelDto.getIdConveniencias() != null) {
+            Join<ConvenienciaHasImovel, Imovel> convenienciaHasImovelImovelJoin = root.join("convenienciaHasImovelsByIdImovel");
             list.add(convenienciaHasImovelImovelJoin.get("id").get("convenienciaIdConveniencia").as(Long.class).in(pesquisaImovelDto.getIdConveniencias()));
         }
 
         Predicate[] p = new Predicate[list.size()];
-        return cb.and(list.toArray(p));
+        return p.length > 0 ? cb.and(list.toArray(p)) : null;
     }
 
 }
