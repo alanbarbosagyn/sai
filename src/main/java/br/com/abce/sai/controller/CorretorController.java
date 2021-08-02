@@ -125,7 +125,7 @@ public class CorretorController {
 //            throw new ResourcedMismatchException(id);
 //        }
 
-        validaCorretorCadastrado(newCorretor);
+//        validaCorretorCadastrado(newCorretor);
 
         Corretor CorretorUpdaded = corretorRepository.findById(id)
                 .map(corretor -> {
