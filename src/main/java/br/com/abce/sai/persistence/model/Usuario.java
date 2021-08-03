@@ -55,7 +55,7 @@ public class Usuario {
 
     @Column(name = "tipo", length = 1, nullable = false)
     @NotNull(message = "O tipo de usuário é obrigatório")
-    @Pattern(regexp = "[1-3]]", message = "O tipo deve ser 1 - Administrador, 2 - Corretor, 3 - Construtor")
+    @Pattern(regexp = "[1-3]{1}", message = "O tipo deve ser 1 - Administrador, 2 - Corretor, 3 - Construtor")
     private String tipo;
 
     @Column(name = "recuperacao_senha", length = 1, nullable = false)
