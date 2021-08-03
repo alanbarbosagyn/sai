@@ -32,7 +32,7 @@ import java.util.stream.Stream;
 @RestController
 @RequestMapping("/api/usuario")
 @Api
-@CrossOrigin(origins = {"http://localhost:4200", "https://csnnft.hospedagemelastica.com.br", "https://getimoveisgo.com.br"})
+@CrossOrigin(origins = {"http://localhost:4200", "https://csnnft.hospedagemelastica.com.br", "https://getimoveisgo.com.br", "https://feedimoveis.com.br"})
 public class UsuarioController {
 
     private final UsuarioRepository usuarioRepository;
@@ -62,9 +62,9 @@ public class UsuarioController {
         CollectionModel collectionModel;
 
         if (StringUtils.isNotBlank(login) || StringUtils.isNotBlank(email)) {
-
+            String id = (login == null ? "" : login) + (email == null ? "" : email);
             Usuario usuario = (StringUtils.isNotBlank(login)  ? usuarioRepository.findByLogin(login) :  usuarioRepository.findByEmail(email))
-                    .orElseThrow(() -> new RecursoNotFoundException(Usuario.class, login + email));
+                    .orElseThrow(() -> new RecursoNotFoundException(Usuario.class, id));
 
             collectionModel = CollectionModel.of(Stream.of(usuario).map(assembler::toModel).collect(Collectors.toList()));
         } else {
@@ -129,7 +129,8 @@ public class UsuarioController {
                     usuario.setTipo(newUsuario.getTipo());
                     usuario.setDataAtualizacao(new Date());
                     usuario.setEmail(newUsuario.getEmail());
-                    usuario.setSenha(newUsuario.getSenha());
+//                    if (StringUtils.isNotBlank(newUsuario.getSenha()))
+//                        usuario.setSenha(newUsuario.getSenha());
 
                     if (newUsuario.getSenhaLimpa() != null) {
                         validaSenhaUsuario(newUsuario);

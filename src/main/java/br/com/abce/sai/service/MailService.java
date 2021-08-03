@@ -1,5 +1,6 @@
 package br.com.abce.sai.service;
 
+import br.com.abce.sai.dto.MailDto;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -27,5 +28,9 @@ public class MailService {
         simpleMailMessage.setText(corpoTexto);
 
         mailService.send(simpleMailMessage);
+    }
+
+    public void send(final MailDto mailDto) {
+        send(mailDto.getDestinatario(), mailDto.getAssunto(), mailDto.getCorpoTexto());
     }
 }

@@ -33,7 +33,7 @@ import java.util.stream.Stream;
 @RestController
 @RequestMapping("/api/construtor")
 @Api
-@CrossOrigin(origins = {"http://localhost:4200", "https://csnnft.hospedagemelastica.com.br", "https://getimoveisgo.com.br"})
+@CrossOrigin(origins = {"http://localhost:4200", "https://csnnft.hospedagemelastica.com.br", "https://getimoveisgo.com.br", "https://feedimoveis.com.br"})
 public class ConstrutorController {
 
     private final ConstrutorRepository construtorRepository;
@@ -59,9 +59,9 @@ public class ConstrutorController {
         CollectionModel collectionModel;
 
         if (cnpj != null || (usuarioId != null && usuarioId > 0L)) {
-
+            String id = (cnpj == null ? "" : cnpj) + (usuarioId == null ? "" : usuarioId);
             Construtor contrConstrutor = construtorRepository.findByCnpjOrUsuarioByUsuarioIdUsuario_IdUsuario(cnpj, usuarioId)
-                    .orElseThrow(() -> new RecursoNotFoundException(Construtor.class, cnpj));
+                    .orElseThrow(() -> new RecursoNotFoundException(Construtor.class, id));
 
             collectionModel = CollectionModel.of(Stream.of(contrConstrutor).map(assembler::toModel).collect(Collectors.toList()));
         } else {

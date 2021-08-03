@@ -1,14 +1,12 @@
 package br.com.abce.sai.persistence.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.util.Date;
 
 @Data
@@ -40,6 +38,7 @@ public class Usuario {
     @Transient
     private String senhaLimpaConfirmacao;
 
+    @JsonIgnore
     @Column(name = "senha", nullable = false, length = 100)
     private String senha;
 
@@ -55,6 +54,8 @@ public class Usuario {
     private AuthProvider authProvider;
 
     @Column(name = "tipo", length = 1, nullable = false)
+    @NotNull(message = "O tipo de usuário é obrigatório")
+    @Pattern(regexp = "[1-3]]", message = "O tipo deve ser 1 - Administrador, 2 - Corretor, 3 - Construtor")
     private String tipo;
 
     @Column(name = "recuperacao_senha", length = 1, nullable = false)

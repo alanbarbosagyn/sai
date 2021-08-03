@@ -33,7 +33,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 @RequestMapping("/api/foto")
 @Api
-@CrossOrigin(origins = {"http://localhost:4200", "https://csnnft.hospedagemelastica.com.br", "https://getimoveisgo.com.br"})
+@CrossOrigin(origins = {"http://localhost:4200", "https://csnnft.hospedagemelastica.com.br", "https://getimoveisgo.com.br", "https://feedimoveis.com.br"})
 public class FotoController {
 
     private FotoRepository fotoRepository;
@@ -52,15 +52,14 @@ public class FotoController {
     public ResponseEntity<byte[]> findByOne(
             @PathVariable @NotNull(message = "Id da foto obrigatório.")
             @NotNull(message = "foto é obrigatório.") Long id,
-            @RequestParam(required = false) @Min(message = "Valor mínimo de 30px", value = 30) Integer with,
-            @RequestParam(required = false) @Max(message = "Valor máximo de 300px", value = 300) Integer lenght) {
+            @RequestParam(required = false) @Min(message = "Valor mínimo de 30px", value = 30) Integer with) {
 
         Foto foto = fotoRepository.findById(id)
                 .orElseThrow(() -> new RecursoNotFoundException(Foto.class, id));
 
-        if (with != null && lenght != null) {
+        if (with != null) {
 
-            byte[] reSizedImage = getReSizedImage(foto, with, lenght);
+            byte[] reSizedImage = getReSizedImage(foto, with);
 
             foto.setImagem(reSizedImage);
         }
@@ -80,7 +79,7 @@ public class FotoController {
         Foto fotoSaved = fotoRepository.save(foto);
 
         EntityModel<Foto> fotoModel = EntityModel.of(fotoSaved,
-                linkTo(methodOn(FotoController.class).findByOne(fotoSaved.getIdFoto(), null, null)).withSelfRel());
+                linkTo(methodOn(FotoController.class).findByOne(fotoSaved.getIdFoto(), null)).withSelfRel());
 
         return ResponseEntity.created(fotoModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(fotoModel);
@@ -98,12 +97,14 @@ public class FotoController {
         return ResponseEntity.noContent().build();
     }
 
-    private byte[] getReSizedImage(Foto foto, Integer with, Integer height) {
+    private byte[] getReSizedImage(Foto foto, Integer with) {
 
         try {
 
             InputStream is = new ByteArrayInputStream(foto.getImagem());
             BufferedImage bi = ImageIO.read(is);
+
+            int height = getHeightProportional(bi, with);
 
             bi = imageConverter.resizeImageGr(bi, with, height);
 
@@ -118,6 +119,14 @@ public class FotoController {
             throw new InfraestructureException(ex);
         }
 
+    }
+
+    private Integer getHeightProportional(BufferedImage bi, Integer with) {
+
+        float biWidth = (float) bi.getWidth();
+        final float proportion = with > biWidth ? with/ biWidth : biWidth /with;
+
+        return (int) (with > biWidth ? bi.getHeight() * proportion : bi.getHeight()/proportion);
     }
 
     private Foto getFoto(MultipartFile multipartFile) {

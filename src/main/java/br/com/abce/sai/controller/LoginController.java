@@ -13,16 +13,18 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
 @RestController
 @RequestMapping("/api/auth")
 @Api
-@CrossOrigin(origins = {"http://localhost:4200", "https://csnnft.hospedagemelastica.com.br", "https://getimoveisgo.com.br"})
+@CrossOrigin(origins = {"http://localhost:4200", "https://csnnft.hospedagemelastica.com.br", "https://getimoveisgo.com.br", "https://feedimoveis.com.br"})
 public class LoginController {
 
     private UsuarioRepository usuarioRepository;
@@ -47,7 +49,7 @@ public class LoginController {
         Usuario usuario = usuarioRepository.findByLogin(requestLoginDto.getLogin())
                 .orElseThrow(() -> new DataValidationException("Login não encontrado."));
 
-        if (!usuario.getSenha().equals(passwordEncoder.encode(requestLoginDto.getPassword())))
+        if (!passwordEncoder.matches(requestLoginDto.getPassword(), usuario.getSenha()))
             throw new DataValidationException("Senha incorreta");
 
         return  usuarioAssembler.toModel(usuario);
@@ -55,7 +57,7 @@ public class LoginController {
 
     @PostMapping("/esqueci-senha")
     @ApiOperation("Solicitar senha provisório para o usuário")
-    public void esqueciSenha(@Email(message = "Login inválido.") @NotNull(message = "Login obrigatório.") String login) {
+    public void esqueciSenha(@NotNull(message = "Login obrigatório.") String login) {
 
         Usuario usuario = usuarioRepository.findByLogin(login)
                 .orElseThrow(() -> new DataValidationException("Login não encontrado."));
@@ -74,12 +76,12 @@ public class LoginController {
         Usuario usuario = usuarioRepository.findByLogin(requestChangePass.getLogin())
                 .orElseThrow(() -> new DataValidationException("Login não encontrado."));
 
-        if (!usuario.getSenha().equals(passwordEncoder.encode(requestChangePass.getPassword())))
+        if (!passwordEncoder.matches(requestChangePass.getPassword(), usuario.getSenha()))
             throw new DataValidationException("Senha atual incorreta");
 
         String novaSenhaEncodada = passwordEncoder.encode(requestChangePass.getNewPassword());
 
-        if (!usuario.getSenha().equals(novaSenhaEncodada))
+        if (!passwordEncoder.matches(requestChangePass.getNewPassword(), usuario.getSenha()))
             throw new DataValidationException("Senha igual a atual");
 
         usuario.setSenha(novaSenhaEncodada);

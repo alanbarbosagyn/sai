@@ -35,7 +35,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 @RequestMapping("/api/imoveis")
 @Api
-@CrossOrigin(origins = {"http://localhost:4200", "https://csnnft.hospedagemelastica.com.br", "https://getimoveisgo.com.br"})
+@CrossOrigin(origins = {"http://localhost:4200", "https://csnnft.hospedagemelastica.com.br", "https://getimoveisgo.com.br", "https://feedimoveis.com.br"})
 public class ImovelController {
 
 	private ImovelRepository imovelRepository;
@@ -183,7 +183,7 @@ public class ImovelController {
 		imovelHasFoto.setFotoByFotoIdFoto(foto);
 
 		EntityModel<ImovelHasFoto> imovelEntityModel = EntityModel.of(imovelFotoRepository.save(imovelHasFoto)
-			,linkTo(methodOn(FotoController.class).findByOne(foto.getIdFoto(), null, null)).withSelfRel());
+			,linkTo(methodOn(FotoController.class).findByOne(foto.getIdFoto(), null)).withSelfRel());
 
 		return ResponseEntity.created(imovelEntityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
 				.body(imovelEntityModel);
@@ -214,7 +214,7 @@ public class ImovelController {
 		for (ImovelHasFoto imovelHasFoto : imovelFotoRepository.findImovelHasFotosById_ImovelIdImovel(idImovel)) {
 			EntityModel<ImovelHasFoto> imoveis = EntityModel.of(imovelHasFoto,
 					linkTo(methodOn(FotoController.class)
-							.findByOne(imovelHasFoto.getId().getFotoIdFoto(), Const.MIN_WITH, Const.MIN_HEIGHT)).withSelfRel(),
+							.findByOne(imovelHasFoto.getId().getFotoIdFoto(), Const.MIN_WITH)).withSelfRel(),
 					linkTo(methodOn(ImovelController.class)
 							.findAllFoto(imovelHasFoto.getId().getImovelIdImovel())).withRel("fotos-imovel"));
 			imovelHasFotoCollection.add(imoveis);

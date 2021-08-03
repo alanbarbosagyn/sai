@@ -37,7 +37,7 @@ public class ImovelModelAssembler implements RepresentationModelAssembler<Imovel
 
         if (entity.getImovelHasFotosByIdImovel() != null)
             for (ImovelHasFoto imovelHasFoto : entity.getImovelHasFotosByIdImovel()) {
-                builderFotos.add(linkTo(methodOn(FotoController.class).findByOne(imovelHasFoto.getId().getFotoIdFoto(), null, null)).withRel("fotos"));
+                builderFotos.add(linkTo(methodOn(FotoController.class).findByOne(imovelHasFoto.getId().getFotoIdFoto(), null)).withRel("fotos"));
             }
 
         ImovelDto imovelDto = modelMapper.map(entity, ImovelDto.class);

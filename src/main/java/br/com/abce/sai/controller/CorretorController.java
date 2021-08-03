@@ -32,7 +32,7 @@ import java.util.stream.Stream;
 @RestController
 @RequestMapping("/api/corretor")
 @Api
-@CrossOrigin(origins = {"http://localhost:4200", "https://csnnft.hospedagemelastica.com.br", "https://getimoveisgo.com.br"})
+@CrossOrigin(origins = {"http://localhost:4200", "https://csnnft.hospedagemelastica.com.br", "https://getimoveisgo.com.br", "https://feedimoveis.com.br"})
 public class CorretorController {
 
     private final CorretorRepository corretorRepository;
@@ -64,8 +64,9 @@ public class CorretorController {
 
         if (cpf != null || creci != null || (usuarioId != null && usuarioId > 0L)) {
 
+            String id = (cpf == null ? "" : cpf) + (creci == null ? "" : creci) + (usuarioId == null ? "" : usuarioId) ;
             Corretor corretor = corretorRepository.findByNumCreciOrCpfOrUsuarioByUsuarioIdUsuario_IdUsuario(creci, cpf, usuarioId)
-                    .orElseThrow(() -> new RecursoNotFoundException(Corretor.class, cpf + creci + usuarioId));
+                    .orElseThrow(() -> new RecursoNotFoundException(Corretor.class, id));
 
             collectionModel = CollectionModel.of(Stream.of(corretor).map(assembler::toModel).collect(Collectors.toList()));
 

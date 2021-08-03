@@ -22,7 +22,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 @RequestMapping("/api/conveniencia-imovel")
 @Api
-@CrossOrigin(origins = {"http://localhost:4200", "https://csnnft.hospedagemelastica.com.br", "https://getimoveisgo.com.br"})
+@CrossOrigin(origins = {"http://localhost:4200", "https://csnnft.hospedagemelastica.com.br", "https://getimoveisgo.com.br", "https://feedimoveis.com.br"})
 public class ConvenienciaController {
 
     private ConvenienciaRepositoy repositoy;
@@ -49,7 +49,9 @@ public class ConvenienciaController {
                 .map(assembler::toModel)
                 .collect(Collectors.toList());
 
-        return CollectionModel.of(convenienciasList, linkTo(methodOn(ConvenienciaController.class).findAll(nome)).withSelfRel());
+        String nomeSearch = nome == null ? "" : nome;
+
+        return CollectionModel.of(convenienciasList, linkTo(methodOn(ConvenienciaController.class).findAll(nomeSearch)).withSelfRel());
     }
 
     @ApiOperation(value = "Consulta uma conveniência de imóvel por ID.")

@@ -26,5 +26,6 @@ public class CorretorImovelFavorito {
     @MapsId("corretorId")
     @ManyToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "corretor_id", referencedColumnName = "id_corretor", nullable = false)
+    @JsonIgnore
     private Corretor corretorByCorretorId;
 }
