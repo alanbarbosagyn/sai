@@ -51,14 +51,14 @@ public class FotoController {
     public ResponseEntity<byte[]> findByOne(
             @PathVariable @NotNull(message = "Id da foto obrigatório.")
             @NotNull(message = "foto é obrigatório.") Long id,
-            @RequestParam(required = false) @Min(message = "Valor mínimo de 30px", value = 30) Integer with) {
+            @RequestParam(required = false) @Min(message = "Valor mínimo de 30px", value = 30) Integer width) {
 
         Foto foto = fotoRepository.findById(id)
                 .orElseThrow(() -> new RecursoNotFoundException(Foto.class, id));
 
-        if (with != null) {
+        if (width != null) {
 
-            byte[] reSizedImage = getReSizedImage(foto, with);
+            byte[] reSizedImage = getReSizedImage(foto, width);
 
             foto.setImagem(reSizedImage);
         }
