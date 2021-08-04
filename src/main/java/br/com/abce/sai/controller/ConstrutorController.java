@@ -33,7 +33,6 @@ import java.util.stream.Stream;
 @RestController
 @RequestMapping("/api/construtor")
 @Api
-@CrossOrigin(origins = {"http://localhost:4200", "https://mvzrxz.hospedagemelastica.com.br", "https://getimoveisgo.com.br", "https://feedimoveis.com.br"})
 public class ConstrutorController {
 
     private final ConstrutorRepository construtorRepository;

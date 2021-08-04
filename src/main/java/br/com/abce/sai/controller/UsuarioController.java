@@ -11,7 +11,6 @@ import br.com.abce.sai.service.MailService;
 import io.micrometer.core.instrument.util.StringUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -32,7 +31,6 @@ import java.util.stream.Stream;
 @RestController
 @RequestMapping("/api/usuario")
 @Api
-@CrossOrigin(origins = {"http://localhost:4200", "https://mvzrxz.hospedagemelastica.com.br", "https://getimoveisgo.com.br", "https://feedimoveis.com.br"})
 public class UsuarioController {
 
     private final UsuarioRepository usuarioRepository;
