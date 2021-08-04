@@ -1,6 +1,7 @@
 package br.com.abce.sai.controller;
 
 import br.com.abce.sai.converter.ImageConverter;
+import br.com.abce.sai.converter.impl.ImageCompress;
 import br.com.abce.sai.exception.InfraestructureException;
 import br.com.abce.sai.exception.RecursoNotFoundException;
 import br.com.abce.sai.persistence.model.Foto;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.awt.image.BufferedImage;
@@ -39,9 +39,12 @@ public class FotoController {
 
     private ImageConverter imageConverter;
 
-    public FotoController(FotoRepository fotoRepository, ImageConverter imageConverter) {
+    private ImageCompress imageCompress;
+
+    public FotoController(FotoRepository fotoRepository, ImageConverter imageConverter, ImageCompress imageCompress) {
         this.fotoRepository = fotoRepository;
         this.imageConverter = imageConverter;
+        this.imageCompress = imageCompress;
     }
 
     @ApiOperation(value = "Consulta uma foto.")
@@ -132,9 +135,14 @@ public class FotoController {
 
         try {
 
+            InputStream is = new ByteArrayInputStream(multipartFile.getBytes());
+            BufferedImage bi = ImageIO.read(is);
+
+            byte[] imageCompressBytes = imageCompress.compressTo(bi, multipartFile.getContentType().split("/")[1]);
+
             Foto foto = new Foto();
             foto.setTipo(multipartFile.getContentType());
-            foto.setImagem(multipartFile.getBytes());
+            foto.setImagem(imageCompressBytes);
             foto.setNameFile(multipartFile.getOriginalFilename());
 
             return foto;
