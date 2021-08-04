@@ -21,6 +21,6 @@ public class UsuarioAssembler implements RepresentationModelAssembler<Usuario, E
         return EntityModel.of(entity,
                 linkTo(methodOn(UsuarioController.class).findByOne(entity.getIdUsuario())).withSelfRel(),
                 linkTo(methodOn(UsuarioController.class).findAll(entity.getLogin(), entity.getEmail())).withRel("usuarios"),
-                linkTo(methodOn(FotoController.class).findByOne(idFoto, 50)).withRel("foto"));
+                linkTo(methodOn(FotoController.class).findByOne(idFoto, null)).withRel("foto"));
     }
 }
