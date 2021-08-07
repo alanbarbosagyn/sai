@@ -15,6 +15,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
@@ -96,7 +97,7 @@ public class UsuarioController {
 
         EntityModel<Usuario> tipoImovelEntityModel = assembler.toModel(usuarioRepository.save(usuario));
 
-        mailService.send(usuario.getLogin(), Const.ASSUNTO_EMAIL_NOVO_USUARIO, Const.CORPO_EMAIL_NOVO_USUARIO);
+        mailService.send(usuario.getLogin(), Const.ASSUNTO_EMAIL_NOVO_USUARIO, Const.CORPO_EMAIL_NOVO_USUARIO, MediaType.TEXT_PLAIN_VALUE);
 
         return ResponseEntity.created(tipoImovelEntityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(tipoImovelEntityModel);

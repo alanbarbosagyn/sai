@@ -12,8 +12,8 @@ import br.com.abce.sai.service.MailService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -65,7 +65,7 @@ public class LoginController {
 
         usuarioRepository.save(usuario);
 
-        mailService.send(usuario.getLogin(), Const.ASSUNTO_SENHA_PROVISORIA, Const.CORPO_EMAIL_SENHA_PROVISORIA);
+        mailService.send(usuario.getLogin(), Const.ASSUNTO_SENHA_PROVISORIA, Const.CORPO_EMAIL_SENHA_PROVISORIA, MediaType.TEXT_PLAIN_VALUE);
     }
 
     @PostMapping("/trocar-senha")
@@ -88,6 +88,6 @@ public class LoginController {
 
         usuarioRepository.save(usuario);
 
-        mailService.send(usuario.getLogin(), Const.ASSUNTO_TROCA_SENHA, Const.CORPO_EMAIL_TROCA_SENHA);
+        mailService.send(usuario.getLogin(), Const.ASSUNTO_TROCA_SENHA, Const.CORPO_EMAIL_TROCA_SENHA, MediaType.TEXT_PLAIN_VALUE);
     }
 }
