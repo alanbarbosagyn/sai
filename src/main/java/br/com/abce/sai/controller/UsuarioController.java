@@ -127,6 +127,7 @@ public class UsuarioController {
                     usuario.setTipo(newUsuario.getTipo());
                     usuario.setDataAtualizacao(new Date());
                     usuario.setEmail(newUsuario.getEmail());
+                    usuario.setNome(newUsuario.getNome());
 //                    if (StringUtils.isNotBlank(newUsuario.getSenha()))
 //                        usuario.setSenha(newUsuario.getSenha());
 

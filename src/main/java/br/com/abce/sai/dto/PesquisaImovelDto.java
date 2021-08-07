@@ -15,6 +15,7 @@ public class PesquisaImovelDto {
     private Long[] idPerfil;
     private Long[] idConveniencias;
     private Long[] idConstrutores;
+    private Long[] idCorretores;
 
     private Map<Long,String> caracteristica;
 

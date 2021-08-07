@@ -75,6 +75,11 @@ public class ImovelSpecification implements Specification<Imovel> {
             list.add(convenienciaHasImovelImovelJoin.get("id").get("convenienciaIdConveniencia").as(Long.class).in(pesquisaImovelDto.getIdConveniencias()));
         }
 
+        if (pesquisaImovelDto.getIdCorretores() != null) {
+            Join<CorretorImovelFavorito, Imovel> corretorImovelFavoritoImovelJoin = root.join("imovelHasCorretorFavorito");
+            list.add(corretorImovelFavoritoImovelJoin.get("id").get("corretorId").as(Long.class).in(pesquisaImovelDto.getIdCorretores()));
+        }
+
         Predicate[] p = new Predicate[list.size()];
         return p.length > 0 ? cb.and(list.toArray(p)) : null;
     }

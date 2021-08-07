@@ -30,11 +30,6 @@ public class Corretor {
     @Column(name = "num_creci", nullable = false, unique = true, length = 20)
     private String numCreci;
 
-    @NotNull(message = "O nome é obrigatório.")
-    @Size(message = "O nome pode conter até 45 dígitos.", max = 45)
-    @Column(name = "nome", nullable = false, length = 45)
-    private String nome;
-
     @NotNull(message = "A data de nascimento é obrigatório.")
     @Column(name = "data_nascimento", nullable = false, length = 45)
     private String dataNascimento;

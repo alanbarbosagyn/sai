@@ -132,7 +132,6 @@ public class CorretorController {
                     corretor.setCelular(newCorretor.getCelular());
                     corretor.setCpf(newCorretor.getCpf());
                     corretor.setDataNascimento(newCorretor.getDataNascimento());
-                    corretor.setNome(newCorretor.getNome());
                     corretor.setTelefone(newCorretor.getTelefone());
                     corretor.setUsuarioByUsuarioIdUsuario(usuarioRepository
                             .findByIdUsuario(corretor.getUsuarioByUsuarioIdUsuario().getIdUsuario())
