@@ -174,7 +174,7 @@ public class UsuarioController {
     }
     private void validaSenhaUsuario(@RequestBody @Validated Usuario usuario) {
 
-        if (usuario.getSenhaLimpa() != null
+        if (StringUtils.isNotBlank(usuario.getSenhaLimpa())
                 && !usuario.getSenhaLimpa().equals(usuario.getSenhaLimpaConfirmacao()))
             throw new DataValidationException("Senha divergente da confirmação.");
     }
