@@ -30,6 +30,7 @@ import java.util.stream.Stream;
 
 
 @RestController
+@CrossOrigin(origins = {"http://localhost:4200", "https://mvzrxz.hospedagemelastica.com.br", "https://feedimoveis.com.br"})
 @RequestMapping("/api/corretor")
 @Api
 public class CorretorController {
