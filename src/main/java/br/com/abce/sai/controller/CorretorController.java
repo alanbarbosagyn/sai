@@ -100,11 +100,13 @@ public class CorretorController {
             corretor.setUsuarioByUsuarioIdUsuario(Objects.requireNonNull(usuario.getBody()).getContent());
         }
 
-        validaCorretorCadastrado(corretor);
+        if (corretor.getUsuarioId() != null) {
+                corretor.setUsuarioByUsuarioIdUsuario(usuarioRepository
+                    .findByIdUsuario(corretor.getUsuarioId())
+                    .orElseThrow(() -> new DataValidationException("Usuário não cadastrado.")));
+        }
 
-        corretor.setUsuarioByUsuarioIdUsuario(usuarioRepository
-                .findByIdUsuario(corretor.getUsuarioByUsuarioIdUsuario().getIdUsuario())
-                .orElseThrow(() -> new DataValidationException("Usuário não cadastrado.")));
+        validaCorretorCadastrado(corretor);
 
         corretor.setDataCadastro(new Date());
 
