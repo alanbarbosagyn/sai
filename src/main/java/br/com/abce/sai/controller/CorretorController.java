@@ -30,6 +30,7 @@ import java.util.stream.Stream;
 
 
 @RestController
+@CrossOrigin(origins = {"http://localhost:4200", "https://mvzrxz.hospedagemelastica.com.br", "https://feedimoveis.com.br"})
 @RequestMapping("/api/corretor")
 @Api
 public class CorretorController {
@@ -99,11 +100,13 @@ public class CorretorController {
             corretor.setUsuarioByUsuarioIdUsuario(Objects.requireNonNull(usuario.getBody()).getContent());
         }
 
-        validaCorretorCadastrado(corretor);
+        if (corretor.getUsuarioId() != null) {
+                corretor.setUsuarioByUsuarioIdUsuario(usuarioRepository
+                    .findByIdUsuario(corretor.getUsuarioId())
+                    .orElseThrow(() -> new DataValidationException("Usuário não cadastrado.")));
+        }
 
-        corretor.setUsuarioByUsuarioIdUsuario(usuarioRepository
-                .findByIdUsuario(corretor.getUsuarioByUsuarioIdUsuario().getIdUsuario())
-                .orElseThrow(() -> new DataValidationException("Usuário não cadastrado.")));
+        validaCorretorCadastrado(corretor);
 
         corretor.setDataCadastro(new Date());
 
@@ -132,7 +135,6 @@ public class CorretorController {
                     corretor.setCelular(newCorretor.getCelular());
                     corretor.setCpf(newCorretor.getCpf());
                     corretor.setDataNascimento(newCorretor.getDataNascimento());
-                    corretor.setNome(newCorretor.getNome());
                     corretor.setTelefone(newCorretor.getTelefone());
                     corretor.setUsuarioByUsuarioIdUsuario(usuarioRepository
                             .findByIdUsuario(corretor.getUsuarioByUsuarioIdUsuario().getIdUsuario())

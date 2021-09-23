@@ -40,20 +40,20 @@ public class SaiApplication extends SpringBootServletInitializer {
 		return new BCryptPasswordEncoder();
 	}
 
-	@Bean
-	public WebMvcConfigurer corsConfigurer() {
-		return new WebMvcConfigurer() {
-			@Override
-			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/api/*")
-						.allowedOrigins(
-								"http://localhost:4200",
-								"https://mvzrxz.hospedagemelastica.com.br",
-								"https://getimoveisgo.com.br",
-								"https://feedimoveis.com.br");
-			}
-		};
-	}
+//	@Bean
+//	public WebMvcConfigurer corsConfigurer() {
+//		return new WebMvcConfigurer() {
+//			@Override
+//			public void addCorsMappings(CorsRegistry registry) {
+//				registry.addMapping("/**")
+//						.allowedOrigins(
+//								"http://localhost:4200",
+//								"https://mvzrxz.hospedagemelastica.com.br",
+//								"https://feedimoveis.com.br")
+//						.allowedHeaders("GET", "PUT", "POST", "DELETE");
+//			}
+//		};
+//	}
 
 //	@Bean
 //	public DataSource getDataSource() {

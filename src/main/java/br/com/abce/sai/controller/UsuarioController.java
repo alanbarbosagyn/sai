@@ -15,6 +15,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @RestController
+@CrossOrigin(origins = {"http://localhost:4200", "https://mvzrxz.hospedagemelastica.com.br", "https://feedimoveis.com.br"})
 @RequestMapping("/api/usuario")
 @Api
 public class UsuarioController {
@@ -96,7 +98,7 @@ public class UsuarioController {
 
         EntityModel<Usuario> tipoImovelEntityModel = assembler.toModel(usuarioRepository.save(usuario));
 
-        mailService.send(usuario.getLogin(), Const.ASSUNTO_EMAIL_NOVO_USUARIO, Const.CORPO_EMAIL_NOVO_USUARIO);
+        mailService.send(usuario.getLogin(), Const.ASSUNTO_EMAIL_NOVO_USUARIO, Const.CORPO_EMAIL_NOVO_USUARIO, MediaType.TEXT_PLAIN_VALUE);
 
         return ResponseEntity.created(tipoImovelEntityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(tipoImovelEntityModel);
@@ -127,6 +129,7 @@ public class UsuarioController {
                     usuario.setTipo(newUsuario.getTipo());
                     usuario.setDataAtualizacao(new Date());
                     usuario.setEmail(newUsuario.getEmail());
+                    usuario.setNome(newUsuario.getNome());
 //                    if (StringUtils.isNotBlank(newUsuario.getSenha()))
 //                        usuario.setSenha(newUsuario.getSenha());
 
@@ -174,7 +177,7 @@ public class UsuarioController {
     }
     private void validaSenhaUsuario(@RequestBody @Validated Usuario usuario) {
 
-        if (usuario.getSenhaLimpa() != null
+        if (StringUtils.isNotBlank(usuario.getSenhaLimpa())
                 && !usuario.getSenhaLimpa().equals(usuario.getSenhaLimpaConfirmacao()))
             throw new DataValidationException("Senha divergente da confirmação.");
     }

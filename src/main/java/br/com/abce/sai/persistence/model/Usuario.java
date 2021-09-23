@@ -70,5 +70,8 @@ public class Usuario {
     @Column(name = "data_atualizacao")
     private Date dataAtualizacao;
 
-
+    @NotNull(message = "O nome é obrigatório.")
+    @Size(message = "O nome pode conter até 45 dígitos.", max = 45)
+    @Column(name = "nome", nullable = false, length = 45)
+    private String nome;
 }

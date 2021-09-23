@@ -1,6 +1,7 @@
 package br.com.abce.sai.persistence.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 import org.hibernate.validator.constraints.URL;
@@ -120,7 +121,7 @@ public class Imovel {
 	@OneToMany(mappedBy = "imovelByImovelIdImovel")
 	private Collection<ImovelHasFoto> imovelHasFotosByIdImovel;
 
-//	@Valid
-//	@OneToMany(mappedBy = "imovelByImovelId")
-//	private Collection<CorretorImovelFavorito> imovelHasCorretorFavorito;
+	@JsonIgnore
+	@OneToMany(mappedBy = "imovelByImovelId")
+	private Collection<CorretorImovelFavorito> imovelHasCorretorFavorito;
 }
