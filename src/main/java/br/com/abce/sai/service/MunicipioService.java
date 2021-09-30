@@ -12,6 +12,10 @@ public class MunicipioService {
 
     private MunicipioRepository municipioRepository;
 
+    public MunicipioService(MunicipioRepository municipioRepository) {
+        this.municipioRepository = municipioRepository;
+    }
+
     public Municipio getMunicipio(Municipio municipio) {
 
         if (municipio == null

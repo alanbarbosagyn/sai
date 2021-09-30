@@ -31,6 +31,23 @@ public class ImovelSpecification implements Specification<Imovel> {
             list.add(cb.like(enderecoImovelJoin.get("cidade").as(String.class), "%"+pesquisaImovelDto.getCidade() +"%"));
         }
 
+        if (pesquisaImovelDto.getIdRegiao() != null && pesquisaImovelDto.getIdRegiao().length > 0) {
+            Join<Regiao, Imovel> regiaoImovelJoin = root.join("regiaoImovel", JoinType.INNER);
+            list.add(regiaoImovelJoin.get("idRegiao").as(Long.class).in(pesquisaImovelDto.getIdRegiao()));
+        }
+
+        if (pesquisaImovelDto.getIdMunicipio() != null && pesquisaImovelDto.getIdMunicipio() > 0) {
+            Join<Endereco, Imovel> enderecoImovelJoin = root.join("enderecoByEnderecoIdEndereco", JoinType.INNER);
+            Join<Municipio, Endereco> municipioEnderecoJoin = enderecoImovelJoin.join("municipio", JoinType.INNER);
+            list.add(cb.equal(municipioEnderecoJoin.get("idMunicipio").as(Long.class), pesquisaImovelDto.getIdMunicipio()));
+        }
+
+        if (StringUtils.isNotBlank(pesquisaImovelDto.getCodgMunicipioIbge())) {
+            Join<Endereco, Imovel> enderecoImovelJoin = root.join("enderecoByEnderecoIdEndereco", JoinType.INNER);
+            Join<Municipio, Endereco> municipioEnderecoJoin = enderecoImovelJoin.join("municipio", JoinType.INNER);
+            list.add(cb.equal(municipioEnderecoJoin.get("codgIbge").as(String.class), pesquisaImovelDto.getCodgMunicipioIbge()));
+        }
+
         if (pesquisaImovelDto.getAreaConstruidaMaxima() != null && pesquisaImovelDto.getAreaConstruidaMaxima() > 0) {
             list.add(cb.lt(root.get("areaUtil").as(Double.class), pesquisaImovelDto.getAreaConstruidaMaxima()));
         }

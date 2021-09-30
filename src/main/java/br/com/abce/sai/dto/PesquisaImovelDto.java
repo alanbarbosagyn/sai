@@ -21,6 +21,9 @@ public class PesquisaImovelDto {
 
     private String cidade;
     private String bairro;
+    private String codgMunicipioIbge;
+    private Long idMunicipio;
+    private Long[] idRegiao;
 
     private Double valorMinimo;
     private Double valorMaximo;

@@ -83,4 +83,7 @@ public class ImovelDto {
 
 //    @Valid
 //    private Collection<CorretorDto> listaCorretorFavorito;
+
+    @NotNull(message = "Região é obrigatório")
+    private Regiao regiaoImovel;
 }

@@ -8,6 +8,7 @@ import br.com.abce.sai.persistence.ImovelSpecification;
 import br.com.abce.sai.persistence.model.*;
 import br.com.abce.sai.persistence.repo.*;
 import br.com.abce.sai.representacao.ImovelModelAssembler;
+import br.com.abce.sai.service.MunicipioService;
 import io.swagger.annotations.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -52,7 +53,11 @@ public class ImovelController {
 
 	private FotoRepository fotoRepository;
 
-	public ImovelController(ImovelRepository imovelRepository, ImovelModelAssembler assembler, ModelMapper modelMapper, ConstrutorRepository construtorRepository, ImovelFotoRepository imovelFotoRepository, EnderecoRepository enderecoRepository, FotoRepository fotoRepository) {
+	private RegiaoRepository regiaoRepository;
+
+	private MunicipioService municipioService;
+
+	public ImovelController(ImovelRepository imovelRepository, ImovelModelAssembler assembler, ModelMapper modelMapper, ConstrutorRepository construtorRepository, ImovelFotoRepository imovelFotoRepository, EnderecoRepository enderecoRepository, FotoRepository fotoRepository, RegiaoRepository regiaoRepository, MunicipioService municipioService) {
 		this.imovelRepository = imovelRepository;
 		this.assembler = assembler;
 		this.modelMapper = modelMapper;
@@ -60,6 +65,8 @@ public class ImovelController {
 		this.imovelFotoRepository = imovelFotoRepository;
 		this.enderecoRepository = enderecoRepository;
 		this.fotoRepository = fotoRepository;
+		this.regiaoRepository = regiaoRepository;
+		this.municipioService = municipioService;
 	}
 
 	@ApiOperation(value = "Lista os imóvel.")
@@ -129,9 +136,6 @@ public class ImovelController {
 	@ApiOperation(value = "Atualiza dados do imóvel.")
 	@PutMapping("/{id}")
     public ResponseEntity<EntityModel<ImovelDto>> updateImovel(@RequestBody @Valid ImovelDto newImovel, @PathVariable Long id) {
-//        if (newImovel.getIdImovel() != null && newImovel.getIdImovel().equals(id)) {
-//          throw new ResourcedMismatchException(id);
-//        }
 
 		Imovel imovelUpdaded = imovelRepository.findById(id)
 			.map(imovel -> {
@@ -163,23 +167,8 @@ public class ImovelController {
 		Foto foto = fotoRepository.findById(imovelHasFoto.getId().getFotoIdFoto())
 				.orElseThrow(() -> new DataValidationException("Foto não encontrada."));
 
-//		imovelFotoRepository.findTopByOrdem(imovelHasFoto.getId().getImovelIdImovel())
-//			.ifPresent();
-//
-//		if (maxOrdemFoto.isPresent())
-//			imovelHasFoto.setOrdem(maxOrdemFoto.orElse()get().getOrdem()++);
-//
-//		if (imovelHasFoto.getOrdem() != null && imovelHasFoto.getOrdem() > 0) {
-//			ImovelHasFoto fotoOrdem = imovelFotoRepository.findImovelHasFotosById_ImovelIdImovelAndOrdem(idImovel, imovelHasFoto.getOrdem());
-//			fotoOrdem.setOrdem();
-//		} else {
-//
-//		}
-
-
 		imovelHasFoto.setImovelByImovelIdImovel(imovel);
 		imovelHasFoto.setId(new ImovelHasFotoPK(imovel.getIdImovel(), foto.getIdFoto()));
-//		imovelHasFoto.setOrdem();
 		imovelHasFoto.setFotoByFotoIdFoto(foto);
 
 		EntityModel<ImovelHasFoto> imovelEntityModel = EntityModel.of(imovelFotoRepository.save(imovelHasFoto)
@@ -234,13 +223,22 @@ public class ImovelController {
 				.orElseThrow(() -> new DataValidationException("Construtor não cadastrado."));
 		imovel.setConstrutorByConstrutorIdConstrutor(construtor);
 
+		Regiao regiao = regiaoRepository.findById(imovelDto.getRegiaoImovel().getIdRegiao())
+				.orElseThrow(() -> new DataValidationException("Região não cadastrada."));
+		imovel.setRegiaoImovel(regiao);
+
 		Endereco enderecoIdEndereco = imovelDto.getEnderecoByEnderecoIdEndereco();
 
 		if (enderecoIdEndereco != null) {
 
-			Optional<Endereco> endereco = enderecoRepository.findById(enderecoIdEndereco.getIdEndereco());
+			Endereco enderecoBase;
 
-			Endereco enderecoBase = endereco.isPresent() ? new Endereco() : endereco.get();
+			if (enderecoIdEndereco.getIdEndereco() != null) {
+				Optional<Endereco> endereco = enderecoRepository.findById(enderecoIdEndereco.getIdEndereco());
+				enderecoBase = endereco.orElseGet(Endereco::new);
+			} else {
+				enderecoBase = new Endereco();
+			}
 
 			enderecoBase.setUf(enderecoIdEndereco.getUf());
 			enderecoBase.setNumero(enderecoIdEndereco.getNumero());
@@ -249,7 +247,7 @@ public class ImovelController {
 			enderecoBase.setCidade(enderecoIdEndereco.getCidade());
 			enderecoBase.setCep(enderecoIdEndereco.getCep());
 			enderecoBase.setBairro(enderecoIdEndereco.getBairro());
-
+			enderecoBase.setMunicipio(municipioService.getMunicipio(enderecoIdEndereco.getMunicipio()));
 			imovel.setEnderecoByEnderecoIdEndereco(enderecoBase);
 		}
 

@@ -127,5 +127,5 @@ public class Imovel {
 
 	@JoinColumn(name = "regiao_id_regiao", referencedColumnName = "id_regiao")
 	@ManyToOne
-	private Regiao regiao;
+	private Regiao regiaoImovel;
 }
