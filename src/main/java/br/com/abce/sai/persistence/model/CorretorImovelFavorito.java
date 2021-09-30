@@ -12,7 +12,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "corretor_imovel_favorito", schema = "sai", catalog = "")
+@Table(name = "corretor_imovel_favorito", schema = "sai")
 public class CorretorImovelFavorito {
 
     @EmbeddedId

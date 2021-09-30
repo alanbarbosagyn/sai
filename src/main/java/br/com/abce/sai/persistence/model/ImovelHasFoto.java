@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "imovel_has_foto", schema = "sai", catalog = "")
+@Table(name = "imovel_has_foto", schema = "sai")
 //@IdClass(ImovelHasFotoEntityPK.class)
 public class ImovelHasFoto {
 

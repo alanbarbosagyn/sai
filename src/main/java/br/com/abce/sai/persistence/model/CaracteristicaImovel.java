@@ -15,7 +15,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "caracteristica_imovel", schema = "sai", catalog = "")
+@Table(name = "caracteristica_imovel", schema = "sai")
 public class CaracteristicaImovel {
 
 
@@ -26,7 +26,7 @@ public class CaracteristicaImovel {
 
     @NotNull(message = "A descrição é obrigatória")
     @Size(message = "Tamanho do campo descrição deve ser entre 3 e 45 caracteres", min = 3, max = 45)
-    @Column(name = "descricao", nullable = true, length = 45)
+    @Column(name = "descricao",length = 45)
     private String descricao;
 
     @NotEmpty(message = "O tipo é obrigatório.")
@@ -34,7 +34,7 @@ public class CaracteristicaImovel {
     @Column(name = "tipo", nullable = true)
     private String tipo;
 
-    @Column(name = "icone", nullable = true, length = 45)
+    @Column(name = "icone",length = 45)
     private String icone;
 
     @Column(name = "sequencia", nullable = true)

@@ -17,7 +17,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "corretor", schema = "sai", catalog = "")
+@Table(name = "corretor", schema = "sai")
 public class Corretor {
 
     @Id
@@ -39,7 +39,7 @@ public class Corretor {
     @Column(name = "cpf", nullable = false, unique = true, length = 45)
     private String cpf;
 
-    @Column(name = "telefone", nullable = true, length = 45)
+    @Column(name = "telefone",length = 45)
     private String telefone;
 
     @NotNull(message = "O número de celular é obrigatório.")

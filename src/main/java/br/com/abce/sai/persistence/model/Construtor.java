@@ -14,7 +14,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "construtor", schema = "sai", catalog = "")
+@Table(name = "construtor", schema = "sai")
 public class Construtor {
 
     @Id
@@ -22,10 +22,10 @@ public class Construtor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idConstrutor;
 
-    @Column(name = "nome", nullable = true, length = 45)
+    @Column(name = "nome",length = 45)
     private String nome;
 
-    @Column(name = "cnpj", nullable = true, length = 14)
+    @Column(name = "cnpj",length = 14)
     private String cnpj;
 
 //    @Column(name = "usuario_id_usuario", nullable = false)

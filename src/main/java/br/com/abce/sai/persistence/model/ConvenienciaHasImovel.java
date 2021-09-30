@@ -13,7 +13,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "conveniencia_has_imovel", schema = "sai", catalog = "")
+@Table(name = "conveniencia_has_imovel", schema = "sai")
 //@IdClass(ConvenienciaHasImovelEntityPK.class)
 public class ConvenienciaHasImovel {
 

@@ -9,6 +9,7 @@ import br.com.abce.sai.persistence.model.Usuario;
 import br.com.abce.sai.persistence.repo.ConstrutorRepository;
 import br.com.abce.sai.persistence.repo.UsuarioRepository;
 import br.com.abce.sai.representacao.ConstrutorAssembler;
+import br.com.abce.sai.service.MunicipioService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -56,23 +57,19 @@ public class ConstrutorController {
     public CollectionModel<EntityModel<ConstrutorDto>> findAll(@RequestParam(name = "cnpj", required = false) @ApiParam(name = "CNPJ do construtor(a)") @CNPJ(message = "O CNPJ é inválido.") final String cnpj,
                                                                @RequestParam(name = "usuario-id", required = false) final Long usuarioId) {
 
-        CollectionModel collectionModel;
-
         if (cnpj != null || (usuarioId != null && usuarioId > 0L)) {
             String id = (cnpj == null ? "" : cnpj) + (usuarioId == null ? "" : usuarioId);
             Construtor contrConstrutor = construtorRepository.findByCnpjOrUsuarioByUsuarioIdUsuario_IdUsuario(cnpj, usuarioId)
                     .orElseThrow(() -> new RecursoNotFoundException(Construtor.class, id));
 
-            collectionModel = CollectionModel.of(Stream.of(contrConstrutor).map(assembler::toModel).collect(Collectors.toList()));
+            return CollectionModel.of(Stream.of(contrConstrutor).map(assembler::toModel).collect(Collectors.toList()));
         } else {
 
-            collectionModel = CollectionModel.of(((List<Construtor>) construtorRepository.findAll())
+            return CollectionModel.of(((List<Construtor>) construtorRepository.findAll())
                     .stream()
                     .map(assembler::toModel)
                     .collect(Collectors.toList()));
         }
-
-        return collectionModel;
     }
 
     @ApiOperation(value = "Consulta um construtor de imóvel por ID.")

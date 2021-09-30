@@ -16,7 +16,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "imovel", schema = "sai", catalog = "")
+@Table(name = "imovel", schema = "sai")
 @JsonIdentityInfo(
 		generator = ObjectIdGenerators.PropertyGenerator.class,
 		property = "idImovel")
@@ -40,7 +40,7 @@ public class Imovel {
 
 	@DecimalMax(value = "999999999.99", message = "O valor do imposto não pode ser maior que 999999999.99.")
 	@DecimalMin(value = "0.01", message = "O valor do imposto não pode ser 0,00 (zero).")
-	@Column(name = "valor_imposto", nullable = true, precision = 11, scale = 2)
+	@Column(name = "valor_imposto",precision = 11, scale = 2)
 	private Double valorImposto;
 
 	@NotNull(message = "A área total é obrigatório.")
@@ -51,7 +51,7 @@ public class Imovel {
 
 	@DecimalMax(value = "99999.99", message = "A área útil não pode ser maior que 99999.99.")
 	@DecimalMin(value = "0.01", message = "A área útil não pode ser 0,00 (zero).")
-	@Column(name = "area_util", nullable = true, precision = 7, scale = 2)
+	@Column(name = "area_util",precision = 7, scale = 2)
 	private Double areaUtil;
 
 	@Column(name = "data_cadastro", nullable = false)
@@ -62,12 +62,12 @@ public class Imovel {
 
 	@DecimalMax(value = "90.0", message = "A latitude não pode ser maior que 90.0.")
 	@DecimalMin(value = "-90.0", message = "A latitude não pode ser menor que -90,0.")
-	@Column(name = "localizacao_latitude", nullable = true, precision = 2, scale = 7)
+	@Column(name = "localizacao_latitude",precision = 2, scale = 8)
 	private Double localizacaoLatitude;
 
-	@DecimalMax(value = "90.0", message = "A longitude não pode ser maior que 90.0.")
-	@DecimalMin(value = "-90.0", message = "A latitude não pode ser menor que -90,0.")
-	@Column(name = "localizacao_longitude", nullable = true, precision = 2, scale = 7)
+	@DecimalMax(value = "180.0", message = "A longitude não pode ser maior que 180.0.")
+	@DecimalMin(value = "-180.0", message = "A latitude não pode ser menor que -180,0.")
+	@Column(name = "localizacao_longitude",precision = 3, scale = 8)
 	private Double localizacaoLongitude;
 
 	@URL(message = "Url inválida.")
@@ -124,4 +124,8 @@ public class Imovel {
 	@JsonIgnore
 	@OneToMany(mappedBy = "imovelByImovelId")
 	private Collection<CorretorImovelFavorito> imovelHasCorretorFavorito;
+
+	@JoinColumn(name = "regiao_id_regiao", referencedColumnName = "id_regiao")
+	@ManyToOne
+	private Regiao regiao;
 }

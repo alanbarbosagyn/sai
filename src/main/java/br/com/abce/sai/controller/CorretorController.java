@@ -9,6 +9,7 @@ import br.com.abce.sai.persistence.repo.CorretorRepository;
 import br.com.abce.sai.persistence.repo.EnderecoRepository;
 import br.com.abce.sai.persistence.repo.UsuarioRepository;
 import br.com.abce.sai.representacao.CorretorAssembler;
+import br.com.abce.sai.service.MunicipioService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.hibernate.validator.constraints.br.CPF;
@@ -45,12 +46,15 @@ public class CorretorController {
 
     private final UsuarioController usuarioController;
 
-    public CorretorController(CorretorRepository corretorRepository, UsuarioRepository usuarioRepository, EnderecoRepository enderecoRepository, CorretorAssembler assembler, UsuarioController usuarioController) {
+    private MunicipioService municipioService;
+
+    public CorretorController(CorretorRepository corretorRepository, UsuarioRepository usuarioRepository, EnderecoRepository enderecoRepository, CorretorAssembler assembler, UsuarioController usuarioController, MunicipioService municipioService) {
         this.corretorRepository = corretorRepository;
         this.usuarioRepository = usuarioRepository;
         this.enderecoRepository = enderecoRepository;
         this.assembler = assembler;
         this.usuarioController = usuarioController;
+        this.municipioService = municipioService;
     }
 
     @ApiOperation(value = "Consulta todos os corretores de imóveis.")
@@ -60,7 +64,7 @@ public class CorretorController {
                                                           @RequestParam(name = "usuario-id", required = false) final Long usuarioId
     ) {
 
-        CollectionModel<EntityModel<Corretor>> collectionModel = null;
+        CollectionModel<EntityModel<Corretor>> collectionModel;
 
         if (cpf != null || creci != null || (usuarioId != null && usuarioId > 0L)) {
 
@@ -108,6 +112,8 @@ public class CorretorController {
 
         validaCorretorCadastrado(corretor);
 
+        corretor.getEnderecoByEnderecoIdEndereco().setMunicipio(municipioService.getMunicipio(corretor.getEnderecoByEnderecoIdEndereco().getMunicipio()));
+
         corretor.setDataCadastro(new Date());
 
         Endereco enderecoCorretor = enderecoRepository.save(corretor.getEnderecoByEnderecoIdEndereco());
@@ -130,6 +136,8 @@ public class CorretorController {
 
 //        validaCorretorCadastrado(newCorretor);
 
+        newCorretor.getEnderecoByEnderecoIdEndereco().setMunicipio(municipioService.getMunicipio(newCorretor.getEnderecoByEnderecoIdEndereco().getMunicipio()));
+
         Corretor CorretorUpdaded = corretorRepository.findById(id)
                 .map(corretor -> {
                     corretor.setCelular(newCorretor.getCelular());
@@ -148,6 +156,7 @@ public class CorretorController {
                         corretor.getEnderecoByEnderecoIdEndereco().setLogradouro(newCorretor.getEnderecoByEnderecoIdEndereco().getLogradouro());
                         corretor.getEnderecoByEnderecoIdEndereco().setNumero(newCorretor.getEnderecoByEnderecoIdEndereco().getNumero());
                         corretor.getEnderecoByEnderecoIdEndereco().setUf(newCorretor.getEnderecoByEnderecoIdEndereco().getUf());
+                        corretor.getEnderecoByEnderecoIdEndereco().setMunicipio(newCorretor.getEnderecoByEnderecoIdEndereco().getMunicipio());
 
                     return corretorRepository.save(corretor);
                 })

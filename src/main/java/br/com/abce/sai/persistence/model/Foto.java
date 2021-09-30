@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "foto", schema = "sai", catalog = "")
+@Table(name = "foto", schema = "sai")
 public class Foto {
 
     @Id

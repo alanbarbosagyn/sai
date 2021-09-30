@@ -11,13 +11,13 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "imovel_has_caracteristica_imovel", schema = "sai", catalog = "")
+@Table(name = "imovel_has_caracteristica_imovel", schema = "sai")
 public class ImovelHasCaracteristicaImovel {
 
     @EmbeddedId
     private ImovelHasCaracteristicaImovelPK id;
 
-    @Column(name = "valor", nullable = true, length = 45)
+    @Column(name = "valor",length = 45)
     private String valor;
 
     @MapsId("imovelIdImovel")

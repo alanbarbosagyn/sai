@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "perfil_imovel", schema = "sai", catalog = "")
+@Table(name = "perfil_imovel", schema = "sai")
 public class PerfilImovel {
 
     @Id

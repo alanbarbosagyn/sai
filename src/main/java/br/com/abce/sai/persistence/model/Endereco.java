@@ -1,19 +1,18 @@
 package br.com.abce.sai.persistence.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-@Data
+@Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "endereco", schema = "sai", catalog = "")
+@Table(name = "endereco", schema = "sai")
 public class Endereco {
 
     @Id
@@ -39,7 +38,7 @@ public class Endereco {
 
     @NotBlank(message = "O numero é obritatório.")
     @Size(message = "O número pode ter até 5 caracteres", max = 5)
-    @Column(name = "numero", nullable = true, length = 5)
+    @Column(name = "numero", length = 5)
     private String numero;
 
     @NotBlank(message = "A UF é obritatória")
@@ -62,4 +61,8 @@ public class Endereco {
 //
 //    @OneToMany(mappedBy = "enderecoByEnderecoIdEndereco")
 //    private Collection<Imovel> imovelsByIdEndereco;
+
+    @JoinColumn(name = "municipio_id_municipio", referencedColumnName = "id_municipio")
+    @ManyToOne
+    private Municipio municipio;
 }

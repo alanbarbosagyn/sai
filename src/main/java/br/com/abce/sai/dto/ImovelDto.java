@@ -50,8 +50,8 @@ public class ImovelDto {
     @DecimalMin(value = "-90.0", message = "A latitude não pode ser menor que -90,0.")
     private Double localizacaoLatitude;
 
-    @DecimalMax(value = "90.0", message = "A longitude não pode ser maior que 90.0.")
-    @DecimalMin(value = "-90.0", message = "A latitude não pode ser menor que -90,0.")
+    @DecimalMax(value = "180.0", message = "A longitude não pode ser maior que 180.0.")
+    @DecimalMin(value = "-180.0", message = "A latitude não pode ser menor que -180,0.")
     private Double localizacaoLongitude;
 
     @NotNull(message = "O tipo do imóvel é obrigatório.")
